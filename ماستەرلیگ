@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ماستەر لیگ</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E9EFEA;--ink:#10231A;--grass:#1F6B43;--grass2:#1a5f3c;--gold:#C99A2E;--red:#C23B3B;--blue:#2F6FB0;--card:#fff;--line:#d3dcd5;--mute:#5d6f64}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Vazirmatn','Noto Sans Arabic','Segoe UI',Tahoma,sans-serif;padding-bottom:78px}
+header{background:repeating-linear-gradient(90deg,var(--grass) 0 38px,var(--grass2) 38px 76px);color:#fff;padding:14px 16px 12px;border-bottom:4px solid #fff;box-shadow:0 0 0 1px var(--grass2)}
+header h1{margin:0;font-size:18px;font-weight:800}
+header .sub{display:flex;gap:14px;font-size:13px;margin-top:6px;opacity:.95;flex-wrap:wrap}
+main{padding:12px;max-width:640px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
+.card h2{margin:0 0 8px;font-size:15px;font-weight:800}
+.big{width:100%;border:0;background:var(--ink);color:#fff;font:inherit;font-weight:800;font-size:16px;padding:14px;border-radius:8px}
+.big:active{background:var(--grass)}
+.btn{border:1px solid var(--ink);background:#fff;color:var(--ink);font:inherit;font-size:12px;font-weight:600;padding:5px 9px;border-radius:6px}
+.btn.buy{background:var(--grass);color:#fff;border-color:var(--grass)}
+.btn.sell{background:var(--red);color:#fff;border-color:var(--red)}
+.row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .avw{width:40px;height:40px;border-radius:50%;overflow:hidden;flex:none;background:#dfe7e1}
+.nm{flex:1;min-width:0}
+.nm b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm small{color:var(--mute);font-size:11px}
+.pos{width:30px;text-align:center;font-size:10px;font-weight:800;color:#fff;border-radius:4px;padding:3px 0;flex:none}
+.pos.GK{background:var(--gold)}.pos.DF{background:var(--blue)}.pos.MF{background:#1F8A5B}.pos.FW{background:var(--red)}
+.ovr{width:32px;text-align:center;font-weight:800;font-size:14px;padding:4px 0;border-radius:4px;color:#fff;flex:none}
+.oa{background:var(--gold)}.ob{background:var(--grass)}.oc{background:#587a8f}.od{background:#8a948e}
+.xi{border-right:3px solid var(--grass);padding-right:6px}
+.meRow{background:#fff4d6}
+.act{display:flex;gap:4px;align-items:center}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#fff;border-top:2px solid var(--ink);z-index:5}
+nav button{flex:1;border:0;background:none;font:inherit;font-size:12px;font-weight:600;padding:12px 2px;color:var(--mute)}
+nav button.on{color:#fff;background:var(--ink)}
+select,input{font:inherit;font-size:14px;padding:8px;border:1px solid var(--line);border-radius:6px;background:#fff;width:100%}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.filters input{grid-column:1/3}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:6px 3px;text-align:center;border-bottom:1px solid var(--line)}
+td.t{text-align:right;font-weight:600}
+tr.me{background:#fff4d6}
+.res{display:flex;justify-content:space-between;gap:6px;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}
+.res.me{font-weight:800;background:#fff4d6}
+.res span:nth-child(2){font-weight:800;direction:ltr;min-width:44px;text-align:center}
+.pick{display:flex;justify-content:space-between;align-items:center;width:100%;padding:12px;margin-bottom:6px;background:#fff;border:1px solid var(--line);border-radius:8px;font:inherit;text-align:right}
+.pick small{color:var(--mute)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{border:1px solid var(--ink);background:#fff;border-radius:99px;padding:6px 12px;font:inherit;font-size:12px}
+.chip.on{background:var(--ink);color:#fff}
+.gold{background:linear-gradient(#fff,#fbf1d4);border-color:var(--gold)}
+.award{font-size:13px;line-height:1.9}
+.mute{color:var(--mute);font-size:12px}
+#toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;z-index:30;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90%;text-align:center}
+#toast.on{opacity:1}
+details summary{font-weight:800;font-size:14px}
+.form{display:grid;gap:6px;margin-top:8px}
+.sb{display:flex;align-items:center;justify-content:space-between;gap:6px;font-weight:800;font-size:14px}
+.sb .sc{font-size:30px;direction:ltr}
+.sb .tm{flex:1;text-align:center}
+.dot{display:inline-block;width:22px;height:22px;border-radius:50%;vertical-align:middle;margin-left:4px}
+.ev{font-size:13px;padding:3px 0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;margin:8px 0}
+.grid3 b{display:block;font-size:20px}
+.grid3 small{color:var(--mute);font-size:11px}
+.bar{height:8px;background:#e4eae6;border-radius:4px;overflow:hidden;margin:6px 0}
+.bar i{display:block;height:100%;background:var(--grass)}
+#modal{position:fixed;inset:0;background:rgba(10,20,15,.72);display:none;align-items:center;justify-content:center;z-index:20;padding:16px}
+#modal.on{display:flex}
+.fc{width:100%;max-width:330px;border-radius:18px 18px 44px 44px;padding:16px 16px 16px;color:#2b2208;background:linear-gradient(160deg,#f4dc8a,#c99a2e 55%,#8a6a1c);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.fc.s{background:linear-gradient(160deg,#eef2f4,#aeb9bf 55%,#7b878d);color:#1d2a30}
+.fc.b{background:linear-gradient(160deg,#e9c9a4,#b07b45 55%,#7a4f26);color:#2a1808}
+.fc .top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px}
+.fc .ovrbig{font-size:38px;font-weight:800;line-height:1}
+.fc .avc{width:128px;height:128px;border-radius:50%;overflow:hidden;background:rgba(255,255,255,.35);flex:none}
+.fc .name{text-align:center;font-weight:800;font-size:18px;border-bottom:1px solid rgba(0,0,0,.25);padding-bottom:6px;margin:8px 0}
+.fc .st{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px 10px;direction:ltr;text-align:center;font-weight:800;font-size:18px}
+.fc .st small{font-weight:600;display:block;font-size:10px}
+.fc .foot{text-align:center;font-size:12px;font-weight:700;margin:10px 0 8px}
+.fc .acts{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.bigbtn{margin-bottom:8px}
+</style>
+</head>
+<body>
+<header><h1 id="h1">ماستەر لیگ</h1><div class="sub" id="hsub"></div></header>
+<main id="app"></main>
+<nav id="nav"></nav>
+<div id="toast"></div>
+<div id="modal" onclick="closeCard()"></div>
+<script>
+const LEAGUES=[
+{id:'epl',name:'پریمیەر لیگ',nat:'en'},
+{id:'lal',name:'لالیگا',nat:'es'},
+{id:'sea',name:'سێریا A',nat:'it'},
+{id:'bun',name:'بوندسلیگا',nat:'de'},
+{id:'fr1',name:'لیگ ١',nat:'fr'},
+{id:'sau',name:'خولی سعودی',nat:'sa'},
+{id:'tur',name:'سوپەر لیگی تورکی',nat:'tr'},
+{id:'irq',name:'خولی ئەستێرەکانی عێراق',nat:'iq'}];
+const NAMES={
+en:[['Jack','Tom','Harry','Ben','Luke','Ollie','Sam','Callum','Jamie','Reece','Mason','Ryan'],['Smith','Clarke','Walker','Hughes','Bennett','Wood','Palmer','Hall','Reid','Cooper','Turner','Grant']],
+es:[['Álvaro','Diego','Sergio','Iker','Pablo','Hugo','Adrián','Marc','Raúl','Dani','Mario','Unai'],['García','Romero','Navarro','Molina','Ortega','Vidal','Serrano','Castro','Pons','Iglesias','Ramos','Gil']],
+it:[['Marco','Luca','Matteo','Andrea','Davide','Simone','Nicolò','Fabio','Gianluca','Enzo','Lorenzo','Paolo'],['Rossi','Conti','Greco','Ferri','Bianchi','Moretti','Gallo','Costa','Fontana','Riva','Serra','Valli']],
+de:[['Lukas','Jonas','Felix','Leon','Moritz','Niklas','Tim','Jan','Maxi','Florian','Paul','Kai'],['Müller','Becker','Hoffmann','Koch','Richter','Wolf','Neumann','Krause','Lange','Vogel','Brandt','Seidel']],
+fr:[['Théo','Lucas','Hugo','Nathan','Maxime','Enzo','Yanis','Mathis','Romain','Rémi','Baptiste','Ayoub'],['Martin','Bernard','Dubois','Robert','Moreau','Fournier','Girard','Lambert','Mercier','Roux','Faure','Blanc']],
+sa:[['Mohammed','Abdullah','Fahad','Salman','Saud','Nasser','Khalid','Faisal','Turki','Abdulaziz','Majed','Sultan'],['Al-Qahtani','Al-Dawsari','Al-Ghamdi','Al-Harbi','Al-Otaibi','Al-Shehri','Al-Zahrani','Al-Mutairi','Al-Najdi','Al-Hamdan','Al-Johani','Al-Malki']],
+tr:[['Emre','Burak','Can','Mert','Kerem','Arda','Yusuf','Hakan','Ozan','Berkay','Kaan','Cem'],['Yılmaz','Kaya','Demir','Şahin','Çelik','Aydın','Öztürk','Arslan','Doğan','Koç','Polat','Aksoy']],
+iq:[['محەمەد','ئەحمەد','عەلی','حەسەن','حوسێن','ئایمەن','مەهنەد','ئیبراهیم','ئەمیر','سەیف','زیدان','یاسین'],['جاسم','حوسێن','عەباس','سالم','کەریم','فەرهاد','ڕەشید','نەجم','هادی','جەبار','یوسف','سەعید']]};
+// [لیگ, تیم, هێز, ئەستێرەکان "ناو,پۆست,تەمەن,ئاست"]
+const TD=[
+['epl','Manchester City',84,'Erling Haaland,FW,26,91;Rodri,MF,30,89;Phil Foden,MF,26,86;Josko Gvardiol,DF,24,85;Gianluigi Donnarumma,GK,27,88;Tijjani Reijnders,MF,27,84;Rayan Cherki,MF,22,83'],
+['epl','Arsenal',84,'Bukayo Saka,FW,25,88;Martin Ødegaard,MF,27,87;William Saliba,DF,25,88;David Raya,GK,31,85;Declan Rice,MF,27,87;Viktor Gyökeres,FW,28,85'],
+['epl','Liverpool',84,'Mohamed Salah,FW,34,88;Virgil van Dijk,DF,35,86;Florian Wirtz,MF,23,86;Alexander Isak,FW,26,87;Hugo Ekitike,FW,24,84;Dominik Szoboszlai,MF,25,85;Alisson,GK,33,86'],
+['epl','Manchester United',79,'Bruno Fernandes,MF,31,86;Bryan Mbeumo,FW,27,82;Matheus Cunha,FW,27,83;Benjamin Sesko,FW,23,82;Kobbie Mainoo,MF,21,80'],
+['epl','Chelsea',81,'Cole Palmer,MF,24,87;Enzo Fernández,MF,25,84;Moisés Caicedo,MF,25,85;Reece James,DF,26,84;João Pedro,FW,25,83'],
+['epl','Tottenham',78,'Xavi Simons,MF,23,83;Micky van de Ven,DF,25,83;Cristian Romero,DF,28,85;Mohammed Kudus,FW,26,82'],
+['epl','Newcastle',78,'Bruno Guimarães,MF,28,85;Anthony Gordon,FW,25,83;Sandro Tonali,MF,26,83;Nick Woltemade,FW,24,82'],
+['epl','Aston Villa',77,'Emiliano Martínez,GK,33,85;Morgan Rogers,MF,24,83;Youri Tielemans,MF,29,82'],
+['lal','Real Madrid',86,'Kylian Mbappé,FW,27,91;Vinícius Júnior,FW,26,89;Jude Bellingham,MF,23,90;Thibaut Courtois,GK,34,88;Federico Valverde,MF,28,87;Aurélien Tchouaméni,MF,26,84;Trent Alexander-Arnold,DF,28,85;Bahjat,MF,18,80'],
+['lal','Barcelona',85,'Lamine Yamal,FW,19,90;Raphinha,FW,29,88;Pedri,MF,23,87;Robert Lewandowski,FW,38,84;Frenkie de Jong,MF,29,85;Pau Cubarsí,DF,19,84;Joan García,GK,25,83'],
+['lal','Atlético Madrid',82,'Julián Álvarez,FW,26,87;Antoine Griezmann,FW,35,84;Jan Oblak,GK,33,86;Koke,MF,34,80;Alexander Sørloth,FW,30,81'],
+['lal','Athletic Bilbao',77,'Nico Williams,FW,24,85;Unai Simón,GK,29,85;Iñaki Williams,FW,32,80;Oihan Sancet,MF,26,82'],
+['lal','Real Sociedad',76,'Mikel Oyarzabal,FW,29,85;Takefusa Kubo,FW,25,83'],
+['lal','Villarreal',76,'Gerard Moreno,FW,34,79'],
+['lal','Real Betis',76,'Antony,FW,26,81;Isco,MF,34,78;Giovani Lo Celso,MF,30,80'],
+['lal','Sevilla',73,''],
+['sea','Inter',82,'Lautaro Martínez,FW,28,89;Nicolò Barella,MF,29,86;Alessandro Bastoni,DF,27,87;Federico Dimarco,DF,28,84;Hakan Çalhanoğlu,MF,32,85;Yann Sommer,GK,37,82;Marcus Thuram,FW,29,85'],
+['sea','Napoli',80,'Kevin De Bruyne,MF,35,84;Scott McTominay,MF,29,84;Romelu Lukaku,FW,33,80;Alessandro Buongiorno,DF,27,82'],
+['sea','AC Milan',79,'Rafael Leão,FW,27,85;Mike Maignan,GK,31,87;Luka Modrić,MF,40,79;Christian Pulisic,FW,27,83'],
+['sea','Juventus',79,'Kenan Yıldız,FW,21,85;Dušan Vlahović,FW,26,82;Gleison Bremer,DF,29,84;Jonathan David,FW,26,82'],
+['sea','Roma',76,'Paulo Dybala,FW,32,82;Lorenzo Pellegrini,MF,30,81;Gianluca Mancini,DF,30,80'],
+['sea','Atalanta',78,'Ademola Lookman,FW,29,83;Marco Carnesecchi,GK,26,83;Ederson,MF,27,82'],
+['sea','Lazio',75,'Mattia Zaccagni,FW,31,80;Ivan Provedel,GK,32,80'],
+['sea','Fiorentina',74,'Moise Kean,FW,26,83;David de Gea,GK,35,80'],
+['bun','Bayern Munich',85,'Harry Kane,FW,33,91;Jamal Musiala,MF,23,88;Michael Olise,FW,24,87;Joshua Kimmich,MF,31,87;Manuel Neuer,GK,40,80;Luis Díaz,FW,29,85;Dayot Upamecano,DF,27,84;Alphonso Davies,DF,25,83'],
+['bun','Borussia Dortmund',79,'Serhou Guirassy,FW,30,84;Julian Brandt,MF,30,82;Gregor Kobel,GK,28,86;Nico Schlotterbeck,DF,26,84'],
+['bun','Bayer Leverkusen',79,'Patrik Schick,FW,30,83;Alejandro Grimaldo,DF,30,84;Exequiel Palacios,MF,27,82'],
+['bun','RB Leipzig',77,'David Raum,DF,28,80'],
+['bun','VfB Stuttgart',75,'Deniz Undav,FW,30,82;Alexander Nübel,GK,29,82'],
+['bun','Eintracht Frankfurt',75,'Mario Götze,MF,34,78'],
+['bun','SC Freiburg',73,''],
+['bun','VfL Wolfsburg',72,''],
+['fr1','Paris Saint-Germain',84,'Ousmane Dembélé,FW,29,91;Vitinha,MF,26,88;Achraf Hakimi,DF,27,87;Khvicha Kvaratskhelia,FW,25,87;Désiré Doué,FW,21,86;João Neves,MF,21,85;Marquinhos,DF,32,85;Lucas Chevalier,GK,24,83'],
+['fr1','Marseille',77,'Mason Greenwood,FW,24,83;Pierre-Emerick Aubameyang,FW,37,77;Geoffrey Kondogbia,MF,33,78'],
+['fr1','Monaco',76,'Takumi Minamino,FW,31,79;Denis Zakaria,MF,29,79'],
+['fr1','Lyon',75,'Alexandre Lacazette,FW,35,78'],
+['fr1','Lille',75,''],
+['fr1','Lens',74,''],
+['fr1','Nice',73,''],
+['fr1','Rennes',73,''],
+['sau','Al Nassr',80,'Cristiano Ronaldo,FW,41,83;João Félix,FW,26,82;Sadio Mané,FW,34,81;Kingsley Coman,FW,30,82;Samú Costa,MF,25,78;Ângelo,MF,21,77;Mohamed Simakan,DF,26,78;Iñigo Martínez,DF,35,77;Nawaf Al-Aqidi,GK,26,74'],
+['sau','Al Hilal',82,'Karim Benzema,FW,38,82;Sergej Milinković-Savić,MF,31,83;Rúben Neves,MF,29,83;Youssef En-Nesyri,FW,29,79;Crysencio Summerville,FW,24,80;Malcom,FW,29,80;Ollie Watkins,FW,30,80;Theo Hernández,DF,29,83;Yassine Bounou,GK,35,80;Salem Al-Dawsari,FW,35,79'],
+['sau','Al Ahli',79,'Riyad Mahrez,FW,35,80;Ivan Toney,FW,30,82;Franck Kessié,MF,29,80;Édouard Mendy,GK,34,80;Merih Demiral,DF,28,78;Roger Ibañez,DF,27,78;Galeno,FW,29,79;Francisco Trincão,FW,26,80;Firas Al-Buraikan,FW,26,77'],
+['sau','Al Ittihad',78,'Steven Bergwijn,FW,28,79;Houssem Aouar,MF,28,77;Fabinho,MF,32,78;Moussa Diaby,FW,27,78;Ilenikhena,FW,20,74;Predrag Rajković,GK,30,76;Saleh Al-Shehri,FW,32,74'],
+['sau','Al Qadsiah',76,'Mateo Retegui,FW,27,80;Otávio,MF,31,76'],
+['sau','Al Shabab',73,'Marcelo Grohe,GK,39,74'],
+['sau','Al Ettifaq',73,''],
+['sau','Al Taawoun',72,''],
+['tur','Galatasaray',80,'Victor Osimhen,FW,27,86;Leroy Sané,FW,30,82;Lucas Torreira,MF,30,79;Davinson Sánchez,DF,30,78;Barış Alper Yılmaz,FW,26,79;Mario Lemina,MF,33,76'],
+['tur','Fenerbahçe',79,'Anderson Talisca,FW,32,81;Marco Asensio,MF,30,80;Ngolo Kanté,MF,35,79;Milan Škriniar,DF,31,81;Dominik Livaković,GK,31,79;Sebastian Szymański,MF,27,80'],
+['tur','Beşiktaş',77,'Orkun Kökçü,MF,25,82;Rafa Silva,FW,33,79;Ersin Destanoğlu,GK,25,75'],
+['tur','Trabzonspor',75,'Uğurcan Çakır,GK,30,80;Paul Onuachu,FW,32,77'],
+['tur','Başakşehir',73,''],
+['tur','Amedspor',71,'Alban Lafont,GK,27,75;Lumbardh Dellova,DF,27,72;Ermal Krasniqi,MF,27,72;Umut Meraş,DF,30,71;Burak Bozan,MF,22,71;Rayan Raveloson,MF,29,70;David Bates,DF,29,70;Amadou Cissé,DF,24,68;Furkan Soyalp,MF,27,69;Ali Turap Bülbül,DF,21,66'],
+['tur','Samsunspor',72,''],
+['tur','Göztepe',72,''],
+['irq','ئەلشورتە',63,''],
+['irq','ئەلقوەی جەویە',63,''],
+['irq','هەولێر',62,''],
+['irq','نەورۆز',60,''],
+['irq','ئەلزەوڕا',61,''],
+['irq','ئەلتەلەبە',61,''],
+['irq','دهۆک',60,''],
+['irq','نەفتی وەسەت',59,'']];
+const KIT={'Manchester City':['#6CABDD','#ffffff'],'Arsenal':['#EF0107','#ffffff'],'Liverpool':['#C8102E','#ffffff'],'Manchester United':['#DA291C','#111111'],'Chelsea':['#034694','#ffffff'],'Tottenham':['#ffffff','#132257'],'Newcastle':['#222222','#ffffff'],'Aston Villa':['#670E36','#95BFE5'],'Real Madrid':['#ffffff','#d8b24a'],'Barcelona':['#A50044','#004D98'],'Atlético Madrid':['#CB3524','#ffffff'],'Athletic Bilbao':['#EE2523','#ffffff'],'Real Sociedad':['#0067B1','#ffffff'],'Villarreal':['#FBE122','#005187'],'Real Betis':['#0BB363','#ffffff'],'Sevilla':['#ffffff','#D71920'],'Inter':['#0068A8','#111111'],'Napoli':['#12A0D7','#ffffff'],'AC Milan':['#FB090B','#111111'],'Juventus':['#222222','#ffffff'],'Roma':['#8E1F2F','#F0BC42'],'Atalanta':['#1E71B8','#111111'],'Lazio':['#87D8F7','#ffffff'],'Fiorentina':['#482E92','#ffffff'],'Bayern Munich':['#DC052D','#ffffff'],'Borussia Dortmund':['#FDE100','#111111'],'Bayer Leverkusen':['#E32221','#111111'],'RB Leipzig':['#ffffff','#DD0741'],'VfB Stuttgart':['#ffffff','#E32219'],'Eintracht Frankfurt':['#E1000F','#111111'],'SC Freiburg':['#222222','#E2001A'],'VfL Wolfsburg':['#65B32E','#ffffff'],'Paris Saint-Germain':['#004170','#DA291C'],'Marseille':['#ffffff','#2FAEE0'],'Monaco':['#E51B22','#ffffff'],'Lyon':['#ffffff','#1B3E7E'],'Lille':['#E01E13','#ffffff'],'Lens':['#F5C000','#E01E13'],'Nice':['#E2001A','#111111'],'Rennes':['#E13327','#111111'],'Al Nassr':['#F4C20D','#1B3A8C'],'Al Hilal':['#0A57B5','#ffffff'],'Al Ahli':['#0B8A4E','#ffffff'],'Al Ittihad':['#F7D000','#111111'],'Al Qadsiah':['#F6A800','#111111'],'Galatasaray':['#A90432','#FDB912'],'Fenerbahçe':['#FFED00','#00205B'],'Beşiktaş':['#222222','#ffffff'],'Trabzonspor':['#800020','#00A1E1'],'Başakşehir':['#F36F21','#14213D'],'Amedspor':['#0A8F3C','#D0202B'],'Samsunspor':['#E2001A','#ffffff'],'Göztepe':['#F7D117','#E2001A']};
+// [پێست 0-4, شێوەی قژ 0-5, ڕەنگی قژ 0-4]
+const NOTABLE={'Cristiano Ronaldo':[1,1,0],'Erling Haaland':[0,3,2],'Kylian Mbappé':[3,1,0],'Vinícius Júnior':[3,1,0],'Mohamed Salah':[2,2,0],'Sadio Mané':[4,1,0],'Harry Kane':[0,0,1],'Lamine Yamal':[2,2,0],'Jude Bellingham':[3,0,0],'Ousmane Dembélé':[3,0,0],'Karim Benzema':[1,0,0],'Rodri':[1,0,1],'Phil Foden':[0,0,2],'Bukayo Saka':[4,2,0],'Virgil van Dijk':[3,1,0],'Victor Osimhen':[4,1,0],'Romelu Lukaku':[4,1,0],'Raphinha':[2,0,0],'Lautaro Martínez':[1,0,0],'Rafael Leão':[3,2,0],'Paulo Dybala':[0,0,1],'Antoine Griezmann':[0,0,2],'Luka Modrić':[0,3,2],'Manuel Neuer':[0,0,3],'Moise Kean':[3,1,0],'Mason Greenwood':[3,0,0],'Marcus Thuram':[3,0,0],'Khvicha Kvaratskhelia':[1,0,0],'Achraf Hakimi':[2,1,0],'Kevin De Bruyne':[0,0,4],'Pedri':[1,0,0],'Robert Lewandowski':[0,0,1],'Kobbie Mainoo':[4,1,0],'Cole Palmer':[2,1,0],'Ivan Toney':[4,1,0],'Riyad Mahrez':[2,1,0],'Ngolo Kanté':[4,1,0],'Marco Asensio':[1,0,0],'Ollie Watkins':[4,1,0],'Bahjat':[1,0,0]};
+const SKIN=[['#f7d9c4','#e5b99c'],['#ecc09b','#d29f78'],['#c98e63','#a86c45'],['#8d5a3b','#6e4129'],['#5a3a27','#432a1b']];
+const HAIRC=['#1a1410','#4a3220','#c9a45c','#8a8a8a','#7a3a1c'];
+const SKW={en:[.55,.18,.07,.14,.06],es:[.5,.35,.08,.05,.02],it:[.55,.38,.05,.02,0],de:[.6,.25,.05,.07,.03],fr:[.3,.2,.1,.25,.15],sa:[0,.25,.55,.17,.03],tr:[.2,.55,.22,.03,0],iq:[0,.2,.6,.18,.02]};
+const POSK={GK:'پارێزەر',DF:'بەرگری',MF:'ناوەڕاست',FW:'هێرشبەر'};
+const ROUNDS=14,MAXSQ=30,MIN={GK:2,DF:4,MF:4,FW:3};
+const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,pick=a=>a[R(0,a.length-1)],clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const hh=n=>{n=(n^61)^(n>>>16);n=(n+(n<<3))|0;n=n^(n>>>4);n=Math.imul(n,0x27d4eb2d);n=n^(n>>>15);return n>>>0};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $=s=>document.querySelector(s);
+let S=null,TAB='home',PL='epl',TL=null,MK={l:'all',pos:'all',q:''},MEMO={},XI={},START={mode:null,name:'',pos:'FW'};
+const T=id=>S.teams[id],P=id=>S.players.find(p=>p.id==id),mine=()=>S.players.filter(p=>p.t==S.user);
+const natOf=t=>LEAGUES.find(l=>l.id==t.l).nat;
+const isP=()=>S&&S.mode=='player';
+const money=v=>'€'+(Math.round(v*10)/10)+'M';
+const tier=o=>o>=85?'a':o>=78?'b':o>=70?'c':'d';
+const POSORD=p=>({GK:0,DF:1,MF:2,FW:3})[p];
+const posOptions=sel=>Object.keys(POSK).map(k=>`<option value="${k}" ${k==sel?'selected':''}>${POSK[k]}</option>`).join('');
+
+function save(){try{localStorage.setItem(‘ml_save_v2’,JSON.stringify(S))}catch(e){}}
+function load(){try{const x=localStorage.getItem(‘ml_save_v2’);if(x)S=JSON.parse(x)}catch(e){}}
+function toast(m){const t=$(’#toast’);t.textContent=m;t.classList.add(‘on’);clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove(‘on’),2200)}
+
+function kit(t){return KIT[t.n]||[‘hsl(’+(hh(t.id*97)%360)+’,55%,38%)’,’#ffffff’]}
+function avatar(p,s){
+if(p.img)return `<img src="${esc(p.img)}" style="width:${s}px;height:${s}px;object-fit:cover" onerror="this.style.display='none'">`;
+const t=T(p.t),k=kit(t),nat=natOf(t),h=n=>hh(p.id*31+n);
+let sk,st,hc;const nb=NOTABLE[p.n];
+if(nb){sk=nb[0];st=nb[1];hc=nb[2]}else{
+const r=(h(1)%1000)/1000,w=SKW[nat];let acc=0;sk=0;
+for(let i=0;i<5;i++){acc+=w[i];if(r<acc){sk=i;break}}
+const sts=sk>=3?[1,1,2,5,0,4]:[0,0,1,3,2,4];st=sts[h(2)%6];
+hc=(nat==‘sa’||nat==‘iq’||nat==‘tr’)?(h(3)%6?0:1):[0,0,1,1,2,4][h(3)%6];
+if(sk>=3)hc=0}
+if(p.a>=36&&st!=4)hc=3;
+const [sc,sd]=SKIN[sk],hcol=HAIRC[hc];
+const jc=p.p==‘GK’?(k[0]==’#2d8a4a’?’#6a3fa0’:’#2d8a4a’):k[0];
+let back=’’,front=’’;
+if(st==5)back=`<circle cx="50" cy="30" r="25" fill="${hcol}"/>`;
+if(st==3){back=`<path d="M30 40 Q28 14 50 14 Q72 14 70 40 L72 66 L64 62 L36 62 L28 66Z" fill="${hcol}"/>`;front=`<path d="M33 36 Q34 21 50 21 Q66 21 67 36 Q58 26 50 28 Q42 26 33 36Z" fill="${hcol}"/>`}
+if(st==2)front=[[36,27],[44,21],[53,20],[62,24],[67,32],[33,35]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="7" fill="${hcol}"/>`).join(’’);
+if(st==1)front=`<path d="M33 36 Q34 22 50 22 Q66 22 67 36 Q61 29 50 29 Q39 29 33 36Z" fill="${hcol}" opacity=".9"/>`;
+if(st==0)front=`<path d="M32 38 Q31 17 50 17 Q69 17 68 38 Q63 27 50 28 Q37 27 32 38Z" fill="${hcol}"/>`;
+const beard=(h(4)%4==0&&p.a>=22)?`<path d="M34 46 Q36 66 50 66 Q64 66 66 46 Q60 56 50 56 Q40 56 34 46Z" fill="${hcol}" opacity=".85"/>`:’’;
+return `<svg viewBox="0 0 100 100" width="${s}" height="${s}"><rect width="100" height="100" fill="${k[0]}" opacity=".2"/>${back} <path d="M8 100 Q14 72 50 70 Q86 72 92 100Z" fill="${jc}"/><path d="M39 71 Q50 84 61 71 L58 70 Q50 76 42 70Z" fill="${k[1]}"/> <rect x="42" y="56" width="16" height="17" fill="${sd}"/><ellipse cx="33" cy="44" rx="3" ry="5" fill="${sd}"/><ellipse cx="67" cy="44" rx="3" ry="5" fill="${sd}"/> <ellipse cx="50" cy="43" rx="17" ry="21" fill="${sc}"/>${beard}${front} <path d="M40 38 L47 37 M53 37 L60 38" stroke="${hcol}" stroke-width="2" stroke-linecap="round" fill="none"/> <circle cx="43.5" cy="42" r="1.9" fill="#1d1410"/><circle cx="56.5" cy="42" r="1.9" fill="#1d1410"/> <path d="M50 44 Q48 50 51 50" stroke="${sd}" stroke-width="1.6" fill="none"/><path d="M44.5 54 Q50 58 55.5 54" stroke="#7a3b30" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>`}
+function stats(p){const o=p.o,gk=p.p==‘GK’;
+const off=gk?[0,0,-4,1,-14,-2]:{FW:[2,4,0,2,-18,-4],MF:[-2,-6,3,1,-8,-2],DF:[-3,-18,-4,-8,5,4]}[p.p];
+return off.map((d,i)=>{let v=o+d+(hh(p.id*13+i)%9)-4;if(i==0&&p.a>30)v-=(p.a-30)*1.5;return clamp(Math.round(v),25,99)})}
+
+function genName(nat){const [f,l]=NAMES[nat];return pick(f)+’ ‘+pick(l)}
+function mkP(t,pos,o,a,n){const p={id:S.nid++,n:n||genName(natOf(t)),p:pos,a:a,o:Math.round(o),t:t.id,g:0,as:0};S.players.push(p);return p}
+function dropLowest(tid,pos){const g=S.players.filter(p=>p.t==tid&&p.p==pos&&!p.star&&!p.me).sort((a,b)=>a.o-b.o)[0];if(g)S.players.splice(S.players.indexOf(g),1)}
+function genSquad(t,st){
+const comp={GK:3,DF:7,MF:7,FW:5};
+for(const pos in comp)for(let i=0;i<comp[pos];i++)mkP(t,pos,clamp(t.s+R(-13,3),45,80),Math.round((R(18,34)+R(18,36))/2));
+if(st)st.split(’;’).forEach(x=>{const [n,pos,a,o]=x.split(’,’);dropLowest(t.id,pos);const q=mkP(t,pos,+o,+a,n);q.star=1;if(n==‘Bahjat’)q.bj=1});
+}
+function rr(ids){const n=ids.length;let a=ids.slice();const rounds=[];
+for(let r=0;r<n-1;r++){const m=[];for(let i=0;i<n/2;i++){const h=a[i],b=a[n-1-i];m.push(r%2?[b,h]:[h,b])}
+rounds.push(m);a=[a[0],a[n-1],…a.slice(1,n-1)]}
+return rounds.concat(rounds.map(m=>m.map(([h,b])=>[b,h])))}
+function buildFixtures(){S.fx={};LEAGUES.forEach(l=>{const ids=S.teams.filter(t=>t.l==l.id).map(t=>t.id).sort(()=>Math.random()-.5);S.fx[l.id]=rr(ids)})}
+function newWorld(){
+S={teams:[],players:[],nid:1,season:2026,week:0,fx:{},last:null,hist:[],user:null,mode:null,me:null,pot:85,xp:0,train:2,offers:null,over:false,budget:0};
+TD.forEach(([l,n,s,st],i)=>{const t={id:i,n,l,s,pts:0,w:0,d:0,lo:0,gf:0,ga:0};S.teams.push(t);genSquad(t,st)});
+buildFixtures();
+}
+function val(p){const b=Math.pow(Math.max(p.o-50,1),2.6)/60;const f=p.a<=21?1.4:p.a<=25?1.15:p.a<=29?1:p.a<=32?.6:.3;return Math.max(.2,Math.round(b*f*10)/10)}
+function str(id){if(MEMO[id]!=null)return MEMO[id];
+const sq=S.players.filter(p=>p.t==id);const top=(pos,n)=>sq.filter(p=>p.p==pos).sort((a,b)=>b.o-a.o).slice(0,n).map(p=>p.o);
+const x=[…top(‘GK’,1),…top(‘DF’,4),…top(‘MF’,3),…top(‘FW’,3)];
+return MEMO[id]=x.reduce((a,b)=>a+b,0)/Math.max(x.length,1)}
+function xiIds(id){const sq=S.players.filter(p=>p.t==id);const s=new Set();
+[[‘GK’,1],[‘DF’,4],[‘MF’,3],[‘FW’,3]].forEach(([pos,n])=>sq.filter(p=>p.p==pos).sort((a,b)=>b.o-a.o).slice(0,n).forEach(p=>s.add(p.id)));return s}
+function pois(l){const L=Math.exp(-l);let k=0,p=1;do{k++;p*=Math.random()}while(p>L);return Math.min(k-1,8)}
+function sim(h,a){const sh=str(h),sa=str(a);return [pois(1.45*Math.exp((sh-sa)/20)),pois(1.1*Math.exp((sa-sh)/20))]}
+function pickW(t,kind,ex){
+const sq=S.players.filter(p=>p.t==t&&p!==ex),xi=XI[t]||(XI[t]=xiIds(t));
+const W=kind==‘g’?{FW:6,MF:2.5,DF:.7,GK:.02}:{FW:3,MF:4,DF:1.2,GK:.05};
+const ws=sq.map(p=>W[p.p]*Math.pow(p.o/70,4)*(xi.has(p.id)?1:.12));const tot=ws.reduce((a,b)=>a+b,0);let r=Math.random()*tot;
+for(let i=0;i<sq.length;i++){r-=ws[i];if(r<=0)return sq[i]}return sq[0]}
+function record(h,a,gh,ga){
+const H=T(h),A=T(a);H.gf+=gh;H.ga+=ga;A.gf+=ga;A.ga+=gh;
+if(gh>ga){H.pts+=3;H.w++;A.lo++}else if(gh<ga){A.pts+=3;A.w++;H.lo++}else{H.pts++;A.pts++;H.d++;A.d++}
+const ev=[];[[h,gh],[a,ga]].forEach(([t,n])=>{for(let i=0;i<n;i++){const s=pickW(t,‘g’);s.g++;let as=null;
+if(Math.random()<.7){as=pickW(t,‘a’,s);if(as)as.as++}ev.push({t,s:s.n,a:as?as.n:null,m:R(1,90)})}});
+return ev}
+function table(l){return S.teams.filter(t=>t.l==l).sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf)}
+
+function playWeek(){
+if(S.over)return;
+MEMO={};XI={};const w=S.week,L=T(S.user).l,last={w:w+1,ms:[],um:null,ev:[],me:null};
+const m0=isP()?P(S.me):null,g0=m0?m0.g:0,a0=m0?m0.as:0,st0=m0?xiIds(S.user).has(m0.id):false;
+LEAGUES.forEach(l=>S.fx[l.id][w].forEach(([h,a])=>{const [gh,ga]=sim(h,a);const ev=record(h,a,gh,ga);
+if(l.id==L){last.ms.push({h,a,gh,ga});if(h==S.user||a==S.user){last.um={h,a,gh,ga};last.ev=ev.sort((x,y)=>x.m-y.m)}}}));
+if(m0){const scored=m0.g>g0||m0.as>a0;if(st0||scored||Math.random()<.35)m0.ap=(m0.ap||0)+1;
+last.me={st:st0,g:m0.g-g0,a:m0.as-a0};S.xp+=S.train;
+while(S.xp>=10){S.xp-=10;m0.o=Math.min(S.pot,m0.o+1)}}
+S.last=last;S.week++;
+if(S.week>=ROUNDS){endSeason();TAB=‘awards’;toast(‘وەرز تەواو بوو! خەڵاتەکان بزانە’)}
+save();render()}
+
+function makeOffers(){const m=P(S.me);
+S.offers=S.teams.filter(t=>t.id!=m.t).map(t=>({id:t.id,s:Math.abs(str(t.id)-m.o-4)+Math.random()*8})).sort((a,b)=>a.s-b.s).slice(0,3).map(x=>x.id)}
+function acceptOffer(tid){const m=P(S.me);dropLowest(tid,m.p);m.t=tid;S.user=tid;S.offers=null;TL=T(tid).l;MEMO={};
+toast(’چوویتە ’+T(tid).n);save();render()}
+function requestOffers(){MEMO={};makeOffers();save();render()}
+
+function endSeason(){
+const rank={},champs=[];
+LEAGUES.forEach(l=>{const tb=table(l.id);tb.forEach((t,i)=>rank[t.id]=i+1);champs.push({l:l.name,t:tb[0].n})});
+const nm=p=>({n:p.n,t:T(p.t).n,g:p.g,as:p.as,o:p.o,me:!!p.me});
+const sc=S.players.map(p=>({p,s:p.o+p.g*1.3+p.as*.8+(rank[p.t]==1?7:rank[p.t]<=3?3:0)+Math.random()*3}));
+const best=arr=>arr.slice().sort((a,b)=>b.s-a.s);
+const bd=best(sc).slice(0,3).map(x=>nm(x.p));
+const boot=S.players.slice().sort((a,b)=>b.g-a.g)[0],ast=S.players.slice().sort((a,b)=>b.as-a.as)[0];
+const yg=best(sc.filter(x=>x.p.a<=21))[0],gk=best(sc.filter(x=>x.p.p==‘GK’))[0];
+const h={y:S.season,bd,boot:nm(boot),ast:nm(ast),yg:yg&&nm(yg.p),gk:gk&&nm(gk.p),champs,ur:rank[S.user],ut:T(S.user).n,ret:[],gain:0};
+if(isP()){const m=P(S.me);h.my={o:m.o,g:m.g,as:m.as,ap:m.ap||0};m.cg=(m.cg||0)+m.g;m.cas=(m.cas||0)+m.as;m.cap=(m.cap||0)+(m.ap||0);m.ap=0;m.bd=(m.bd||0)+(bd[0].me?1:0)}
+else{const gain=15+(8-rank[S.user])*3+(rank[S.user]==1?10:0);S.budget=Math.round((S.budget+gain)*10)/10;h.gain=gain}
+const retired=[];
+S.players.forEach(p=>{p.a++;const d=p.a<=21?R(1,4):p.a<=24?R(0,3):p.a<=29?R(-1,1):p.a<=33?R(-3,0):R(-4,-1);
+p.o=clamp(p.o+(p.bj&&p.a<=24?R(2,5):d),40,p.bj?97:95);if(p.me)p.o=Math.min(p.o,S.pot);p.g=0;p.as=0;
+if(!p.me&&(p.a>=37||(p.a>=35&&p.o<60)))retired.push(p)});
+retired.forEach(p=>{S.players.splice(S.players.indexOf(p),1);const t=T(p.t);
+if(p.t==S.user)h.ret.push(p.n);
+mkP(t,p.p,clamp(t.s-8+R(-5,5),50,75),R(18,20))});
+S.hist.unshift(h);
+S.teams.forEach(t=>{t.pts=t.w=t.d=t.lo=t.gf=t.ga=0});
+S.season++;S.week=0;MEMO={};buildFixtures();
+if(isP()){const m=P(S.me);if(m.a>=38)S.over=true;else makeOffers()}}
+
+// ––––– کڕین و فرۆشتن –––––
+function buy(id){if(isP())return;const p=P(id),pr=val(p);
+if(S.budget<pr)return toast(‘پارەکەت بەس نییە’);
+if(mine().length>=MAXSQ)return toast(‘تیمەکەت پڕە (زۆرترین ‘+MAXSQ+’)’);
+const from=T(p.t);mkP(from,p.p,clamp(p.o-R(6,12),48,80),R(19,30));
+p.t=S.user;S.budget=Math.round((S.budget-pr)*10)/10;MEMO={};toast(p.n+’ کڕدرا’);save();closeCard();render()}
+function sell(id){if(isP())return;const p=P(id);const cnt=mine().filter(x=>x.p==p.p).length;
+if(mine().length<=16)return toast(‘تیمەکەت لەوە کەمتر نابێت (١٦)’);
+if(cnt<=MIN[p.p])return toast(‘پێویستت بە ‘+MIN[p.p]+’ ‘+POSK[p.p]+’ هەیە’);
+const pr=Math.round(val(p)*9)/10;
+if(!confirm(p.n+’ بفرۆشرێت بە ‘+money(pr)+’؟’))return;
+const to=pick(S.teams.filter(t=>t.id!=S.user));
+const low=S.players.filter(x=>x.t==to.id&&x.p==p.p&&x!==p).sort((a,b)=>a.o-b.o)[0];
+if(low&&!low.me)S.players.splice(S.players.indexOf(low),1);
+p.t=to.id;S.budget=Math.round((S.budget+pr)*10)/10;MEMO={};toast(p.n+’ فرۆشرا’);save();closeCard();render()}
+function edit(id){const p=P(id);const v=prompt(‘ئاستی نوێی ‘+p.n+’ (٤٠ - ٩٩)’,p.o);if(v==null)return;
+p.o=clamp(parseInt(v)||p.o,40,99);MEMO={};save();render();card(id)}
+function editImg(id){const p=P(id);const v=prompt(‘لینکی وێنەی ‘+p.n+’ (بۆ سڕینەوە بەتاڵی بهێڵەرەوە)’,p.img||’’);if(v==null)return;
+if(v.trim())p.img=v.trim();else delete p.img;save();render();card(id)}
+function addPlayer(){const n=$(’#an’).value.trim(),pos=$(’#ap’).value,a=clamp(parseInt($(’#aa’).value)||24,16,42),o=clamp(parseInt($(’#ao’).value)||70,40,99),t=+$(’#at’).value;
+if(!n)return toast(‘ناوی یاریزان بنووسە’);const p=mkP(T(t),pos,o,a,n);p.star=1;MEMO={};toast(‘زیادکرا’);save();render()}
+function pickTeam(id){const t=T(id);
+if(START.mode==‘player’&&!START.name.trim())return toast(‘سەرەتا ناوی یاریزانەکەت بنووسە’);
+if(!confirm(‘دەتەوێت لەگەڵ ‘+t.n+’ دەست پێبکەیت؟’))return;
+S.mode=START.mode;S.user=id;TAB=‘home’;PL=t.l;TL=t.l;
+if(S.mode==‘player’){dropLowest(id,START.pos);const p=mkP(t,START.pos,60+R(0,5),18,START.name.trim());p.me=1;p.ap=0;
+S.me=p.id;S.pot=R(82,93);S.xp=0;S.train=2;S.budget=0;MEMO={}}
+else S.budget=Math.max(20,Math.round(20+(t.s-58)*5));
+save();render()}
+function resetAll(){if(!confirm(‘هەموو شتێک دەسڕدرێتەوە و لە سەرەتا دەست پێدەکەیتەوە. دڵنیایت؟’))return;
+try{localStorage.removeItem(‘ml_save_v2’)}catch(e){}START={mode:null,name:’’,pos:‘FW’};TAB=‘home’;newWorld();render()}
+function setTrain(n){S.train=n;save();render()}
+
+// ––––– کارتی یاریزان –––––
+function card(id){const p=P(id);if(!p)return;const t=T(p.t),st=stats(p),gk=p.p==‘GK’;
+const L=gk?[‘DIV’,‘HAN’,‘KIC’,‘REF’,‘SPD’,‘POS’]:[‘PAC’,‘SHO’,‘PAS’,‘DRI’,‘DEF’,‘PHY’];
+const cls=p.o>=85?’’:p.o>=76?‘s’:‘b’;let acts=’’;
+if(!isP()){acts+=p.t==S.user?`<button class="btn sell" onclick="sell(${p.id})">فرۆشتن ${money(Math.round(val(p)*9)/10)}</button>`:`<button class="btn buy" onclick="buy(${p.id})">کڕین ${money(val(p))}</button>`}
+acts+=`<button class="btn" onclick="edit(${p.id})">گۆڕینی ئاست</button><button class="btn" onclick="editImg(${p.id})">وێنە</button>`;
+$(’#modal’).innerHTML=`<div class="fc ${cls}" onclick="event.stopPropagation()"><div class="top"><div><div class="ovrbig">${p.o}</div><b>${p.p}</b></div><div class="avc">${avatar(p,128)}</div><div style="text-align:left;font-size:12px;font-weight:700">${esc(t.n)}<br>${p.a} ساڵ</div></div>
+
+ <div class="name">${esc(p.n)}${p.me?' ⭐':''}</div><div class="st">${st.map((v,i)=>`<div>${v}<small>${L[i]}</small></div>`).join('')}</div>
+ <div class="foot">${money(val(p))} · ⚽ ${p.g} · 🎯 ${p.as}</div><div class="acts">${acts}</div></div>`;
+ $('#modal').classList.add('on')}
+function closeCard(){$('#modal').classList.remove('on')}
+
+// ––––– ڕووکار –––––
+const prow=(p,btns,sub,xi)=>`<div class="row ${xi?'xi':''} ${p.me?'meRow':''}" onclick="card(${p.id})"><div class="avw">${avatar(p,40)}</div><span class="pos ${p.p}">${p.p}</span><div class="nm"><b>${esc(p.n)}${p.me?' ⭐':''}</b><small>${p.a} ساڵ · ${sub}</small></div><span class="ovr o${tier(p.o)}">${p.o}</span><div class="act" onclick="event.stopPropagation()">${btns}</div></div>`;
+
+function vPick(){
+$(’#h1’).textContent=‘ماستەر لیگ’;$(’#hsub’).textContent=’’;$(’#nav’).innerHTML=’’;
+if(!START.mode)return `<div class="card"><h2>چۆن دەتەوێت یاری بکەیت؟</h2><button class="big bigbtn" onclick="START.mode='manager';render()">بەڕێوەبەری تیم (Master League)</button><button class="big" onclick="START.mode='player';render()">یاریزان (Be a Legend)</button></div>`;
+let top=`<button class="btn" style="margin-bottom:10px" onclick="START.mode=null;render()">گەڕانەوە</button>`;
+if(START.mode==‘player’)top+=`<div class="card"><h2>یاریزانەکەت دروست بکە</h2><div class="form"><input placeholder="ناوی تۆ" value="${esc(START.name)}" oninput="START.name=this.value"><select onchange="START.pos=this.value">${posOptions(START.pos)}</select><div class="mute">لە تەمەنی ١٨ ساڵی و ئاستی نزمەوە دەست پێدەکەیت. ئێستا کڵوبێک هەڵبژێرە، دەتوانیت ڕیال مەدرید هەڵبژێریت.</div></div></div>`;
+const chips=LEAGUES.map(l=>`<button class="chip ${l.id==PL?'on':''}" onclick="PL='${l.id}';render()">${l.name}</button>`).join(’’);
+const teams=S.teams.filter(t=>t.l==PL).map(t=>`<button class="pick" onclick="pickTeam(${t.id})"><b>${esc(t.n)}</b><small>هێز ${Math.round(str(t.id))}${START.mode=='manager'?' · بودجە '+money(Math.max(20,Math.round(20+(t.s-58)*5))):''}</small></button>`).join(’’);
+return `${top}<div class="chips">${chips}</div>${teams}`}
+
+function vHome(){
+const t=T(S.user),tb=table(t.l),rk=tb.indexOf(t)+1,lg=LEAGUES.find(l=>l.id==t.l);
+let out=’’;
+if(S.over){const m=P(S.me);out+=`<div class="card gold"><h2>کارەکەت وەک یاریزان تەواو بوو</h2><div class="grid3"><div><b>${m.cg||0}</b><small>گۆڵ</small></div><div><b>${m.cas||0}</b><small>ئاسیست</small></div><div><b>${m.bd||0}</b><small>بالۆن دۆر</small></div></div><div class="mute">ئاستی کۆتایی ${m.o} · ${m.cap||0} یاری</div></div>`}
+else{const fx=S.fx[t.l][S.week].find(m=>m[0]==S.user||m[1]==S.user),home=fx[0]==S.user,opp=T(home?fx[1]:fx[0]),ka=kit(T(fx[0])),kb=kit(T(fx[1]));
+out+=`<div class="card gold"><h2>هەفتەی ${S.week+1} لە ${ROUNDS}</h2>
+
+  <div class="sb"><div class="tm"><i class="dot" style="background:${ka[0]};border:3px solid ${ka[1]}"></i>${esc(T(fx[0]).n)}</div><div class="mute">دژی</div><div class="tm"><i class="dot" style="background:${kb[0]};border:3px solid ${kb[1]}"></i>${esc(T(fx[1]).n)}</div></div>
+  <div class="mute" style="margin-top:6px">هێزی تۆ ${Math.round(str(t.id))} · هێزی ${esc(opp.n)} ${Math.round(str(opp.id))}</div>
+  <button class="big" style="margin-top:10px" onclick="playWeek()">یاری هەفتە بکە</button></div>`}
+ if(isP()){const m=P(S.me),xi=xiIds(S.user).has(m.id);
+  out+=`<div class="card"><h2>${esc(m.n)} ⭐</h2><div class="row" style="border:0"><div class="avw" style="width:64px;height:64px">${avatar(m,64)}</div><div class="nm"><b>${esc(t.n)}</b><small>${POSK[m.p]} · ${m.a} ساڵ · ${xi?'یازدەی سەرەکی':'یەدەگ'}</small></div><span class="ovr o${tier(m.o)}" onclick="card(${m.id})">${m.o}</span></div>
+  <div class="grid3"><div><b>${m.g}</b><small>گۆڵ</small></div><div><b>${m.as}</b><small>ئاسیست</small></div><div><b>${m.ap||0}</b><small>یاری</small></div></div>
+  <div class="mute">ڕاهێنان (هەفتانە): پێشکەوتن ${S.xp}/10 · توانای بەرزترین ${S.pot}</div><div class="bar"><i style="width:${S.xp*10}%"></i></div>
+  <div class="chips">${[[1,'سووک'],[2,'ناوەند'],[3,'قورس']].map(([n,l])=>`<button class="chip ${S.train==n?'on':''}" onclick="setTrain(${n})">${l}</button>`).join('')}</div>
+  ${xi?'':'<div class="mute">لە یەدەگیت. ئاستت بەرز بکەرەوە یان بچۆ بۆ کڵوبێکی بچووکتر بۆ یاری زیاتر.</div>'}</div>`;
+  if(!S.over){out+=`<div class="card"><h2>پێشنیارەکانی گواستنەوە</h2>`;
+   if(S.offers&&S.offers.length)out+=S.offers.map(id=>`<div class="row"><div class="nm"><b>${esc(T(id).n)}</b><small>${LEAGUES.find(l=>l.id==T(id).l).name} · هێز ${Math.round(str(id))}</small></div><button class="btn buy" onclick="acceptOffer(${id})">قبوڵ بکە</button></div>`).join('');
+   else out+='<div class="mute">پێشنیار نییە.</div>';
+   out+=`<button class="btn" style="margin-top:8px" onclick="requestOffers()">داوای پێشنیاری نوێ</button></div>`}}
+ out+=`<div class="card"><h2>${lg.name}</h2><div>پلەی ${rk} · ${t.pts} خاڵ</div></div>`;
+ if(S.last){const u=S.last.um;
+  if(u){out+=`<div class="card"><h2>یاری هەفتەی ${S.last.w}</h2><div class="sb"><div class="tm">${esc(T(u.h).n)}</div><div class="sc">${u.gh} - ${u.ga}</div><div class="tm">${esc(T(u.a).n)}</div></div><div style="margin-top:8px">`
+   +(S.last.ev.length?S.last.ev.map(e=>`<div class="ev">${e.m}' ⚽ <b>${esc(e.s)}</b> <span class="mute">${esc(T(e.t).n)}${e.a?' · ئاسیست: '+esc(e.a):''}</span></div>`).join(''):'<div class="mute">گۆڵ نەبوو</div>')+'</div>';
+   if(S.last.me){const lm=S.last.me;out+=`<div class="mute" style="margin-top:8px">تۆ: ${lm.st?'یازدەی سەرەکی':'یەدەگ'}${lm.g?' · '+lm.g+' گۆڵ':''}${lm.a?' · '+lm.a+' ئاسیست':''}</div>`}
+   out+='</div>'}
+  out+=`<div class="card"><h2>ئەنجامەکانی ${lg.name}</h2>`+S.last.ms.map(m=>`<div class="res ${(m.h==S.user||m.a==S.user)?'me':''}"><span>${esc(T(m.h).n)}</span><span>${m.gh} - ${m.ga}</span><span>${esc(T(m.a).n)}</span></div>`).join('')+'</div>'}
+ out+=`<button class="btn" onclick="resetAll()">دەستپێکردنەوە لە سەرەتا</button>`;return out}
+
+function vSquad(){
+const xi=xiIds(S.user),sq=mine().sort((a,b)=>POSORD(a.p)-POSORD(b.p)||b.o-a.o);
+return `<div class="card"><h2>یاریزانەکان (${sq.length})</h2><div class="mute">هێڵی سەوز = یازدەی سەرەکی · کلیک لە یاریزان بکە بۆ کارت</div>`+
+sq.map(p=>prow(p,isP()?’’:`<button class="btn sell" onclick="sell(${p.id})">${money(Math.round(val(p)*9)/10)}</button>`,`⚽ ${p.g} · ئاسیست ${p.as}`,xi.has(p.id))).join(’’)+’</div>’}
+
+function mList(){
+let r=S.players.filter(p=>p.t!=S.user);
+if(MK.l!=‘all’)r=r.filter(p=>T(p.t).l==MK.l);
+if(MK.pos!=‘all’)r=r.filter(p=>p.p==MK.pos);
+if(MK.q)r=r.filter(p=>p.n.toLowerCase().includes(MK.q.toLowerCase()));
+r=r.sort((a,b)=>b.o-a.o).slice(0,40);
+return r.length?r.map(p=>prow(p,`<button class="btn buy" onclick="buy(${p.id})">${money(val(p))}</button>`,esc(T(p.t).n))).join(’’):’<div class="mute">هیچ یاریزانێک نەدۆزرایەوە</div>’}
+function vMarket(){
+const lo=’<option value="all">هەموو خولەکان</option>’+LEAGUES.map(l=>`<option value="${l.id}" ${MK.l==l.id?'selected':''}>${l.name}</option>`).join(’’);
+const po=’<option value="all">هەموو پۆستەکان</option>’+posOptions(MK.pos);
+const to=LEAGUES.map(l=>`<optgroup label="${l.name}">`+S.teams.filter(t=>t.l==l.id).map(t=>`<option value="${t.id}">${esc(t.n)}</option>`).join(’’)+’</optgroup>’).join(’’);
+return `<div class="card"><h2>بازاڕی گواستنەوە</h2><div class="filters"><select onchange="MK.l=this.value;$('#ml').innerHTML=mList()">${lo}</select><select onchange="MK.pos=this.value;$('#ml').innerHTML=mList()">${po}</select><input placeholder="گەڕان بە ناو..." value="${esc(MK.q)}" oninput="MK.q=this.value;$('#ml').innerHTML=mList()"></div><div id="ml">${mList()}</div></div>
+
+ <details class="card"><summary>یاریزانێکی نوێ زیاد بکە</summary><div class="form"><input id="an" placeholder="ناو"><select id="ap">${posOptions('FW')}</select><input id="aa" type="number" placeholder="تەمەن"><input id="ao" type="number" placeholder="ئاست (٤٠-٩٩)"><select id="at">${to}</select><button class="big" onclick="addPlayer()">زیادکردن</button></div></details>`}
+
+function vTable(){
+const lid=TL||T(S.user).l;
+const chips=LEAGUES.map(l=>`<button class="chip ${l.id==lid?'on':''}" onclick="TL='${l.id}';render()">${l.name}</button>`).join(’’);
+const rows=table(lid).map((t,i)=>`<tr class="${t.id==S.user?'me':''}"><td>${i+1}</td><td class="t">${esc(t.n)}</td><td>${t.w+t.d+t.lo}</td><td>${t.w}</td><td>${t.d}</td><td>${t.lo}</td><td style="direction:ltr">${t.gf-t.ga}</td><td><b>${t.pts}</b></td></tr>`).join(’’);
+return `<div class="chips">${chips}</div><div class="card"><table><tr><th>#</th><th>تیم</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr>${rows}</table></div>`}
+
+function vAwards(){
+const sc=S.players.slice().sort((a,b)=>b.g-a.g||b.as-a.as).slice(0,5);
+let out=`<div class="card"><h2>باشترین گۆڵکارەکانی ئێستا</h2>`+sc.map(p=>`<div class="res"><span>${esc(p.n)} <small class="mute">${esc(T(p.t).n)}</small></span><span>⚽ ${p.g}</span></div>`).join(’’)+’</div>’;
+if(!S.hist.length)out+=’<div class="card mute">دوای تەواوبوونی وەرز، خەڵاتەکان لێرە دەردەکەون.</div>’;
+S.hist.forEach(h=>{
+const mine3=h.bd.findIndex(x=>x.me);
+out+=`<div class="card gold award"><h2>وەرزی ${h.y}</h2> ${mine3==0?'🎉 <b>تۆ بالۆن دۆرت بردەوە!</b><br>':mine3>0?'تۆ لە پلەی '+(mine3+1)+'ی بالۆن دۆر بووی<br>':''} 🏆 <b>بالۆن دۆر:</b> ${esc(h.bd[0].n)} (${esc(h.bd[0].t)}) — ${h.bd[0].g} گۆڵ<br> <span class="mute">٢: ${esc(h.bd[1].n)} · ٣: ${esc(h.bd[2].n)}</span><br> 👟 <b>پێڵاوی زێڕین:</b> ${esc(h.boot.n)} (${h.boot.g} گۆڵ)<br> 🎯 <b>زۆرترین ئاسیست:</b> ${esc(h.ast.n)} (${h.ast.as})<br> ${h.yg?`🌟 <b>باشترین گەنج:</b> ${esc(h.yg.n)} (${esc(h.yg.t)})<br>`:''} ${h.gk?`🧤 <b>باشترین پارێزەر:</b> ${esc(h.gk.n)} (${esc(h.gk.t)})<br>`:''} <b>پاڵەوانی خولەکان:</b> ${h.champs.map(c=>esc(c.l)+': '+esc(c.t)).join(' · ')}<br> <b>${esc(h.ut)}:</b> پلەی ${h.ur}${h.gain?' · داهات '+money(h.gain):''}${h.my?'<br><b>تۆ:</b> ئاست '+h.my.o+' · '+h.my.g+' گۆڵ · '+h.my.as+' ئاسیست · '+h.my.ap+' یاری':''}${h.ret&&h.ret.length?'<br>پاشەکشەیان کرد: '+h.ret.map(esc).join('، '):''}</div>`});
+return out}
+
+function render(){
+if(!S)return;
+if(S.user==null){$(’#app’).innerHTML=vPick();return}
+const t=T(S.user);$(’#h1’).textContent=t.n;
+$(’#hsub’).innerHTML=`<span>وەرزی ${S.season}</span>`+(isP()?`<span>ئاستی تۆ ${P(S.me).o}</span>`:`<span>بودجە ${money(S.budget)}</span>`);
+const tabs=[[‘home’,‘سەرەکی’],[‘squad’,‘تیم’]];if(!isP())tabs.push([‘market’,‘بازاڕ’]);tabs.push([‘table’,‘خشتە’],[‘awards’,‘خەڵات’]);
+if(TAB==‘market’&&isP())TAB=‘home’;
+$(’#nav’).innerHTML=tabs.map(([k,n])=>`<button class="${k==TAB?'on':''}" onclick="TAB='${k}';render();scrollTo(0,0)">${n}</button>`).join(’’);
+const v={home:vHome,squad:vSquad,market:vMarket,table:vTable,awards:vAwards}[TAB];
+$(’#app’).innerHTML=v()}
+
+function ensureBahjat(){
+if(S.players.some(p=>p.bj))return;
+const rm=S.teams.find(t=>t.n==‘Real Madrid’);if(!rm)return;
+dropLowest(rm.id,‘MF’);const p=mkP(rm,‘MF’,80,18,‘Bahjat’);p.star=1;p.bj=1;save()}
+load();if(!S)newWorld();ensureBahjat();render();
+</script>
+
+</body>
+</html>
