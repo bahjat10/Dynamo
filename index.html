@@ -32,6 +32,21 @@ h1{margin:0;font-size:22px;font-weight:800}
 .bsum .owe{color:#FFC27A;font-weight:800}
 .kv strong.bad{color:var(--danger)}
 .windblk{margin-top:4px}
+.askbtn{background:rgba(255,255,255,.16);border:0;color:#fff;font:inherit;font-weight:700;padding:6px 14px;border-radius:999px;cursor:pointer}
+#chatSheet{z-index:26;flex-direction:column}
+#chatSheet.open{display:flex}
+#chatMsgs{flex:1;overflow-y:auto;padding:14px 14px 8px;display:flex;flex-direction:column;gap:10px;width:100%;max-width:640px;margin:0 auto}
+.msg{max-width:90%;padding:10px 13px;border-radius:14px;line-height:1.9;font-size:15.5px;word-wrap:break-word}
+.msg.u{background:var(--head);color:#fff;align-self:flex-start;border-bottom-right-radius:4px}
+.msg.a{background:#fff;border:1px solid var(--line);align-self:flex-end;border-bottom-left-radius:4px}
+.msg.e{background:#FBE9E7;color:var(--danger);align-self:stretch;max-width:100%;font-size:14px}
+.msg.t{color:var(--mute);background:#fff;border:1px solid var(--line);align-self:flex-end}
+.qchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.qchips button{border:1.5px solid var(--line);background:#fff;color:var(--ink);padding:8px 12px;border-radius:12px;font:inherit;font-size:14px;cursor:pointer;text-align:right}
+.chatbar{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--line)}
+.chatbar textarea{flex:1;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;resize:none;max-height:120px;min-height:44px}
+.chatbar button{background:var(--copper);color:#fff;border:0;border-radius:12px;padding:0 18px;font:inherit;font-weight:800;cursor:pointer}
+.chatbar button:disabled{opacity:.6}
 .lnk{background:none;border:0;color:var(--mute);font:inherit;text-decoration:underline;cursor:pointer;margin:0 10px}
 .tools{max-width:720px;margin:12px auto 0;padding:0 16px}
 .search{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;font:inherit;background:#fff}
@@ -120,7 +135,7 @@ label.l{display:block;font-weight:700;margin:18px 0 6px}
 <body>
 
 <header>
-  <div class="top"><h1>ئیشەکانمان</h1><div class="count" id="count"></div></div>
+  <div class="top"><h1>ئیشەکانمان</h1><button class="askbtn" id="askBtn">🤖 پرسیار</button><div class="count" id="count"></div></div>
   <div class="mode" id="mode"></div>
   <div class="bsum" id="bsum"></div>
 </header>
@@ -273,6 +288,34 @@ label.l{display:block;font-weight:700;margin:18px 0 6px}
   </div>
 </div>
 
+<!-- یاریدەدەری زیرەک -->
+
+<div class="sheet" id="chatSheet">
+  <div class="bar"><button id="closeChat">داخستن</button><strong>یاریدەدەری دینەمۆ 🤖</strong><button id="chatMenu">⚙</button></div>
+  <div id="chatSetup" style="display:none;padding:16px;max-width:560px;margin:0 auto;width:100%;overflow-y:auto">
+    <div class="sumbox" style="line-height:2.1;font-weight:600">
+      بۆ ئەوەی یاریدەدەرەکە کار بکات، کلیلێکی API پێویستە (ئەمە جیایە لە ئەکاونتی Claude ی ئاسایی و بەپێی بەکارهێنان پارە دەدرێت):
+      <br>١. بڕۆ بۆ <b dir="ltr">console.anthropic.com</b> و ئەکاونتێک دروست بکە
+      <br>٢. لە Billing کەمێک بالانس زیاد بکە
+      <br>٣. لە API Keys ← Create Key، کلیلەکە کۆپی بکە
+      <br>٤. لێرە Paste بکە:
+    </div>
+    <input class="in" id="keyIn" type="password" dir="ltr" placeholder="sk-ant-..." style="margin-top:12px" autocomplete="off">
+    <div class="stack">
+      <button class="btn go" id="keySave">پاشەکەوتکردن</button>
+      <button class="btn" id="keyDel">سڕینەوەی کلیل</button>
+      <button class="btn" id="chatClear">پاککردنەوەی گفتوگۆ</button>
+      <button class="btn" id="setupBack">گەڕانەوە بۆ گفتوگۆ</button>
+    </div>
+    <div class="sub" style="margin-top:10px">کلیلەکە تەنها لەسەر ئەم مۆبایلەدا دەمێنێتەوە و لە هیچ کۆدێکدا نانووسرێت.</div>
+  </div>
+  <div id="chatMsgs"></div>
+  <div class="chatbar" id="chatBar">
+    <textarea id="chatIn" rows="1" placeholder="پرسیارەکەت بنووسە..."></textarea>
+    <button id="chatSend">ناردن</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -323,24 +366,74 @@ if (FIREBASE_CONFIG && window.firebase) {
   };
 } else {
   const K = 'motors_v1';
-  const read = () => { try { return JSON.parse(localStorage.getItem(K)) || []; } catch(e){ return []; } };
-  let cb = () => {};
-  store = {
-    shared: false,
-    listen(f){ cb = f; cb(read().sort((a,b)=>b.createdAt-a.createdAt)); },
-    save(m){
-      const all = read();
-      if (m.id){ const i = all.findIndex(x=>x.id===m.id); if(i>-1) all[i]=m; else all.push(m); }
-      else { m.id = 'm'+Date.now(); all.push(m); }
-      try { localStorage.setItem(K, JSON.stringify(all)); } catch(e){ toast('شوێن پڕبووە'); return Promise.reject(e); }
-      cb(all.sort((a,b)=>b.createdAt-a.createdAt)); return Promise.resolve();
-    },
-    remove(id){
-      const all = read().filter(x=>x.id!==id);
-      try { localStorage.setItem(K, JSON.stringify(all)); } catch(e){ return Promise.reject(e); }
-      cb(all); return Promise.resolve();
-    }
+  const lsRead = () => { try { return JSON.parse(localStorage.getItem(K)) || []; } catch(e){ return []; } };
+  const sortD = a => a.slice().sort((x,y)=>(y.createdAt||0)-(x.createdAt||0));
+  /* ڕێگای کۆن (localStorage) — تەنها ئەگەر IndexedDB کار نەکرد */
+  const makeLocal = () => {
+    let cb = () => {};
+    return {
+      shared:false,
+      listen(f){ cb = f; cb(sortD(lsRead())); },
+      save(m){
+        const all = lsRead();
+        if (m.id){ const i = all.findIndex(x=>x.id===m.id); if(i>-1) all[i]=m; else all.push(m); }
+        else { m.id = 'm'+Date.now(); all.push(m); }
+        try { localStorage.setItem(K, JSON.stringify(all)); } catch(e){ toast('شوێن پڕبووە'); return Promise.reject(e); }
+        cb(sortD(all)); return Promise.resolve();
+      },
+      remove(id){
+        const all = lsRead().filter(x=>x.id!==id);
+        try { localStorage.setItem(K, JSON.stringify(all)); } catch(e){ return Promise.reject(e); }
+        cb(sortD(all)); return Promise.resolve();
+      }
+    };
   };
+  /* ڕێگای نوێ: IndexedDB — شوێنی زۆر گەورە */
+  const makeIdb = () => {
+    let db = null, cache = [], cb = () => {}, fb = null;
+    const open = () => new Promise((res,rej)=>{
+      const r = indexedDB.open('ishekanman', 1);
+      r.onupgradeneeded = () => { r.result.createObjectStore('motors',{keyPath:'id'}); r.result.createObjectStore('meta'); };
+      r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error || new Error('idb')); r.onblocked = () => rej(new Error('blocked'));
+    });
+    const reqP = r => new Promise((res,rej)=>{ r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+    const txDone = t => new Promise((res,rej)=>{ t.oncomplete = () => res(); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error || new Error('abort')); });
+    const init = async () => {
+      db = await open();
+      const flag = await reqP(db.transaction('meta').objectStore('meta').get('migrated'));
+      if (!flag){
+        const old = lsRead();
+        if (old.length){
+          const t = db.transaction('motors','readwrite'), st = t.objectStore('motors');
+          old.forEach(m => { if (m && m.id) st.put(m); });
+          await txDone(t);
+          const back = await reqP(db.transaction('motors').objectStore('motors').getAll());
+          const ids = new Set(back.map(x=>x.id));
+          if (!old.every(m => !m || !m.id || ids.has(m.id))) throw new Error('migration check failed');
+        }
+        const t2 = db.transaction('meta','readwrite'); t2.objectStore('meta').put(true,'migrated'); await txDone(t2);
+        if (old.length){ try { localStorage.removeItem(K); } catch(e){} setTimeout(()=>toast('زانیارییەکان گواسترانەوە بۆ شوێنی گەورە ✔'),700); }
+      }
+      cache = await reqP(db.transaction('motors').objectStore('motors').getAll());
+    };
+    return {
+      shared:false,
+      listen(f){ cb = f; init().then(()=>cb(sortD(cache))).catch(e=>{ console.error(e); fb = makeLocal(); fb.listen(cb); }); },
+      async save(m){
+        if (fb) return fb.save(m);
+        if (!m.id) m.id = 'm'+Date.now();
+        const t = db.transaction('motors','readwrite'); t.objectStore('motors').put(m); await txDone(t);
+        const i = cache.findIndex(x=>x.id===m.id); if (i>-1) cache[i]=m; else cache.push(m);
+        cb(sortD(cache));
+      },
+      async remove(id){
+        if (fb) return fb.remove(id);
+        const t = db.transaction('motors','readwrite'); t.objectStore('motors').delete(id); await txDone(t);
+        cache = cache.filter(x=>x.id!==id); cb(sortD(cache));
+      }
+    };
+  };
+  store = window.indexedDB ? makeIdb() : makeLocal();
 }
 
 $('#mode').textContent = store.shared ? '✔ هاوبەشە — تۆ و باوکت هەردووکتان دەیبینن' : 'ئێستا تەنها لەم مۆبایلەدا پاشەکەوت دەکرێت';
@@ -693,7 +786,7 @@ function showView(id){
   $('#viewBody').innerHTML = `
     ${m.photo?`<img class="big" src="${m.photo}" alt="">`:''}
     <div class="kv">${rows}</div>
-    <div class="stack">${main}</div>
+    <div class="stack">${main}<button class="btn" id="vAsk">🤖 پرسیار دەربارەی ئەم ئامێرە</button></div>
     <div class="row2">
       ${m.owner?`<a class="btn" href="tel:${esc(m.owner)}">پەیوەندی</a>`:''}
       <button class="btn" id="vEdit">دەستکاری</button>
@@ -701,6 +794,7 @@ function showView(id){
     </div>`;
   $('#viewSheet').classList.add('open');
   $('#vEdit').onclick = () => openForm(id);
+  $('#vAsk').onclick = () => openChat('ئەم ئامێرەم هاتووە: ' + recText(m) + '.\n');
   if ($('#vFin')) $('#vFin').onclick = () => openFin(id);
   if ($('#vFinEdit')) $('#vFinEdit').onclick = () => openFin(id);
   if ($('#vPaid')) $('#vPaid').onclick = async () => {
@@ -713,6 +807,112 @@ function showView(id){
   };
 }
 $('#closeView').onclick = () => { $('#viewSheet').classList.remove('open'); viewId = null; };
+
+
+/* ============================================================
+   یاریدەدەری زیرەک (Claude)
+   ============================================================ */
+const AI_MODEL = 'claude-sonnet-5-5';
+const AI_SYSTEM = `You are an experienced assistant for a workshop in Kurdistan (Erbil) that rewinds electric motors and repairs dynamos, generators and household appliances (vacuum brooms, washing machines, coolers, electric heaters, water pumps and similar).
+The user is a practical craftsman, not an engineer. ALWAYS answer in Kurdish Sorani (Arabic script), in simple, short, practical sentences. Use Latin digits for numbers and keep technical terms (Hp, Kw, A, Rpm, UF, mm) as written.
+Plain text only: no markdown tables, no headings. You may use short lines starting with "-" and **bold** for key numbers.
+Topics you help with: single-phase and three-phase motor rewinding (turns, wire size, number of parallel wires, coil span, slots/poles, connection star/delta), capacitors (UF) and start/run windings, wire substitution, generator (تەولید) winding, fault finding (burnt winding, insulation, bearings), and safety.
+Wire size convention in this shop: a number like 80 means 0.80 mm (and 70 = 0.70 mm). Parallel wires wound together: total copper area is proportional to the SUM of the squares of the diameters. To substitute a missing size, keep the sum of squares about equal (within about -2% to +4%) and tell the percentage difference. Example: two wires of 80 (0.64+0.64=1.28) can be replaced by 70 + 90 (0.49+0.81=1.30, +1.6%), or 75 + 85. Also remind them to check that the new wires still fit in the slot.
+Be honest: if exact factory data is needed and you are not sure, say so, give a safe estimate and tell them to check the original winding data (turns count, wire size, pitch) when stripping the old coil. Never invent precise figures. Ask ONE short follow-up question if an important measurement is missing (poles/rpm, slot count, voltage). Mention electrical safety briefly when relevant (discharge capacitors, unplug before work).`;
+
+let chat = [];
+try { chat = JSON.parse(localStorage.getItem('chat_v1')) || []; } catch(e){ chat = []; }
+let chatBusy = false;
+const getKey = () => { try { return localStorage.getItem('ai_key') || ''; } catch(e){ return ''; } };
+const saveChat = () => { try { localStorage.setItem('chat_v1', JSON.stringify(chat.slice(-40))); } catch(e){} };
+
+function recText(m){
+  const j = jobOf(m), parts = [JOBS[j]];
+  if (j==='dynamo') parts.push(typeName(m.type), m.hp+' Hp', m.kw+' Kw', m.a+' A', m.rpm+' Rpm', ufOf(m) ? ufOf(m)+' UF' : '');
+  if (j==='gen') parts.push(m.kv+' Kv', m.rpm+' Rpm', m.gtype);
+  if (SIMPLE.includes(j)) parts.push(m.desc);
+  windsOf(m).forEach((W,i) => {
+    if (!windHas(W)) return;
+    const ws = (W.wires||[]).filter(Boolean).join('+');
+    parts.push((windsOf(m).length>1 ? 'لەفی '+(i+1)+': ' : 'لەف: ') + [W.count ? W.count+' سیم' : '', ws, W.turns ? W.turns+' فڕە' : ''].filter(Boolean).join(' '));
+  });
+  if (m.fault) parts.push('عەیب: '+m.fault);
+  return parts.filter(Boolean).join('، ');
+}
+const fmtMsg = t => esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
+const QUICK = ['سیمی 80 نەبوو، بە چی بیگۆڕم؟', 'دینەمۆی سێ فەز 3 Hp و 1430 Rpm، بە چ شێوەیەک لەف دەکرێت؟', 'دینەمۆی Single سووتاوە، چۆن بزانم کام لەفە سووتاوە؟'];
+
+function renderChat(extra){
+  let h = '';
+  if (!chat.length){
+    h += `<div class="msg a">سڵاو! هەرچی دەربارەی دینەمۆ و لەفکردن و چاککردنی ئامێرە کارەبایی هەیە بپرسە.
+      <div class="qchips">${QUICK.map(q=>`<button type="button" data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div></div>`;
+  }
+  h += chat.map(c => `<div class="msg ${c.role==='user'?'u':'a'}">${fmtMsg(c.content)}</div>`).join('');
+  if (extra==='typing') h += '<div class="msg t">...</div>';
+  if (extra && extra!=='typing') h += `<div class="msg e">${esc(extra)}</div>`;
+  const box = $('#chatMsgs'); box.innerHTML = h; box.scrollTop = box.scrollHeight;
+}
+function showSetup(on){
+  $('#chatSetup').style.display = on ? 'block' : 'none';
+  $('#chatMsgs').style.display = on ? 'none' : 'flex';
+  $('#chatBar').style.display = on ? 'none' : 'flex';
+  if (on) $('#keyIn').value = '';
+}
+function openChat(prefill){
+  $('#chatSheet').classList.add('open');
+  showSetup(!getKey());
+  renderChat();
+  if (prefill && getKey()){ $('#chatIn').value = prefill; setTimeout(()=>{ const t=$('#chatIn'); t.focus(); t.setSelectionRange(t.value.length,t.value.length); },50); }
+}
+async function sendChat(text){
+  text = (text||'').trim();
+  if (!text || chatBusy) return;
+  const key = getKey(); if (!key){ showSetup(true); return; }
+  chatBusy = true; $('#chatSend').disabled = true;
+  chat.push({role:'user', content:text}); $('#chatIn').value = '';
+  renderChat('typing');
+  let hist = chat.slice(-12); while (hist.length && hist[0].role!=='user') hist.shift();
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({model:AI_MODEL, max_tokens:1000, system:AI_SYSTEM, messages:hist.map(({role,content})=>({role,content}))})
+    });
+    const data = await r.json().catch(()=>({}));
+    if (!r.ok) { const err = new Error((data.error && data.error.message) || ('HTTP '+r.status)); err.status = r.status; throw err; }
+    const out = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
+    chat.push({role:'assistant', content: out || '...'});
+    saveChat(); renderChat();
+  } catch(e){
+    chat.pop(); $('#chatIn').value = text;
+    let msg = 'هەڵەیەک ڕوویدا: ' + e.message;
+    if (e.status===401) msg = 'کلیلەکە هەڵەیە. لە ⚙ دووبارە بینووسەرەوە.';
+    else if (/credit|balance/i.test(e.message||'')) msg = 'بالانسی API تەواو بووە. لە console.anthropic.com بالانس زیاد بکە.';
+    else if (e.status===429) msg = 'زۆر داواکاری نێردرا، کەمێک چاوەڕێ بکە و دووبارە هەوڵ بدەرەوە.';
+    else if (e instanceof TypeError) msg = 'پەیوەندی بە ئینتەرنێتەوە نییە.';
+    renderChat(msg);
+  }
+  chatBusy = false; $('#chatSend').disabled = false;
+}
+$('#askBtn').onclick = () => openChat();
+$('#closeChat').onclick = () => $('#chatSheet').classList.remove('open');
+$('#chatMenu').onclick = () => showSetup($('#chatSetup').style.display==='none');
+$('#setupBack').onclick = () => { if (getKey()) { showSetup(false); renderChat(); } else toast('یەکەم کلیل بنووسە'); };
+$('#keySave').onclick = () => {
+  const k = $('#keyIn').value.trim();
+  if (!k) return toast('کلیلەکە بنووسە');
+  try { localStorage.setItem('ai_key', k); } catch(e){ return toast('پاشەکەوت نەکرا'); }
+  toast('پاشەکەوت کرا ✔'); showSetup(false); renderChat();
+};
+$('#keyDel').onclick = () => { try { localStorage.removeItem('ai_key'); } catch(e){} toast('کلیل سڕایەوە'); showSetup(true); };
+$('#chatClear').onclick = async () => {
+  if (!(await ask('هەموو گفتوگۆکە دەسڕێتەوە؟'))) return;
+  chat = []; saveChat(); showSetup(false); renderChat();
+};
+$('#chatSend').onclick = () => sendChat($('#chatIn').value);
+$('#chatIn').addEventListener('keydown', e => { if (e.key==='Enter' && !e.shiftKey && e.ctrlKey) { e.preventDefault(); sendChat($('#chatIn').value); } });
+$('#chatMsgs').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (b) sendChat(b.dataset.q); });
 
 /* ---------- یەدەگ ---------- */
 $('#export').onclick = async () => {
