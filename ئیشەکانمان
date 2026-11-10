@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12343B">
+<title>ئیشەکانمان</title>
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+<link rel="icon" type="image/png" href="apple-touch-icon.png?v=2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ئیشەکانمان">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF1F3; --card:#FFFFFF; --ink:#14222B; --mute:#5E6E78; --line:#D5DCE0;
+  --head:#12343B; --copper:#B87333; --single:#2F6F9F; --danger:#B3261E; --ok:#2E7D4F; --warn:#B26A00;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{font-family:"Vazirmatn",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.6;padding-bottom:96px}
+header{background:var(--head);color:#fff;padding:18px 16px 14px;position:sticky;top:0;z-index:5}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+h1{margin:0;font-size:22px;font-weight:800}
+.count{font-size:14px;opacity:.8}
+.mode{margin-top:8px;font-size:13px;padding:5px 10px;border-radius:8px;background:rgba(255,255,255,.12)}
+.mode.shared{background:rgba(46,125,79,.35)}
+.bsum{margin-top:6px;font-size:14px;font-weight:600}
+.bsum .got{color:#9BE3B5}
+.bsum .owe{color:#FFC27A;font-weight:800}
+.bsum .gotj{color:#9CCBFF}
+.kv strong.bad{color:var(--danger)}
+.windblk{margin-top:4px}
+.later{margin-top:24px;padding:14px 12px 16px;border:2px dashed var(--line);border-radius:16px;background:#F6F8F9}
+.later .lh{font-weight:800;font-size:17px}
+.later .lsub{color:var(--mute);font-size:13px;margin-bottom:2px}
+.askbtn{background:rgba(255,255,255,.16);border:0;color:#fff;font:inherit;font-weight:700;padding:6px 14px;border-radius:999px;cursor:pointer}
+#chatSheet{z-index:26;flex-direction:column}
+#chatSheet.open{display:flex}
+#chatMsgs{flex:1;overflow-y:auto;padding:14px 14px 8px;display:flex;flex-direction:column;gap:10px;width:100%;max-width:640px;margin:0 auto}
+.msg{max-width:90%;padding:10px 13px;border-radius:14px;line-height:1.9;font-size:15.5px;word-wrap:break-word}
+.msg.u{background:var(--head);color:#fff;align-self:flex-start;border-bottom-right-radius:4px}
+.msg.a{background:#fff;border:1px solid var(--line);align-self:flex-end;border-bottom-left-radius:4px}
+.msg.e{background:#FBE9E7;color:var(--danger);align-self:stretch;max-width:100%;font-size:14px}
+.msg.t{color:var(--mute);background:#fff;border:1px solid var(--line);align-self:flex-end}
+.qchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.qchips button{border:1.5px solid var(--line);background:#fff;color:var(--ink);padding:8px 12px;border-radius:12px;font:inherit;font-size:14px;cursor:pointer;text-align:right}
+.chatbar{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--line)}
+.chatbar textarea{flex:1;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;resize:none;max-height:120px;min-height:44px}
+.chatbar button{background:var(--copper);color:#fff;border:0;border-radius:12px;padding:0 18px;font:inherit;font-weight:800;cursor:pointer}
+.chatbar button:disabled{opacity:.6}
+.lnk{background:none;border:0;color:var(--mute);font:inherit;text-decoration:underline;cursor:pointer;margin:0 10px}
+.tools{max-width:720px;margin:12px auto 0;padding:0 16px}
+.search{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;font:inherit;background:#fff}
+select.search{margin-top:10px}
+.chips{display:flex;gap:8px;margin-top:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{border:1.5px solid var(--line);background:#fff;color:var(--ink);padding:8px 16px;border-radius:999px;font:inherit;font-weight:600;cursor:pointer;white-space:nowrap;flex:none}
+.chip.on{background:var(--head);border-color:var(--head);color:#fff}
+.list{max-width:720px;margin:12px auto 0;padding:0 16px;display:grid;gap:12px}
+.item{background:var(--card);border-radius:14px;display:flex;gap:12px;padding:10px;cursor:pointer;border:1px solid var(--line);align-items:stretch}
+.item:active{background:#F6F8F9}
+.thumb{width:88px;min-height:88px;border-radius:10px;background:#DDE3E7 center/cover no-repeat;flex:none;display:grid;place-items:center;color:var(--mute);font-size:28px}
+.info{flex:1;min-width:0}
+.badge{display:inline-block;font-size:13px;font-weight:700;color:#fff;padding:1px 10px;border-radius:6px;background:var(--head);margin-left:4px}
+.badge.single{background:var(--single)} .badge.three{background:var(--copper)}
+.badge.st-open{background:var(--warn)} .badge.st-unpaid{background:var(--danger)} .badge.st-paid{background:var(--ok)}
+.specs{margin-top:4px;font-weight:600;font-size:15px}
+.ltr{direction:ltr;text-align:right}
+.meta{color:var(--mute);font-size:14px;margin-top:2px}
+.price{font-weight:800;color:var(--ok);margin-top:2px}
+.price.no{color:var(--danger)}
+.empty{text-align:center;color:var(--mute);padding:48px 20px}
+.fab{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--copper);color:#fff;border:0;border-radius:999px;padding:16px 28px;font:inherit;font-weight:800;font-size:17px;box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer;z-index:6;white-space:nowrap}
+.sheet{position:fixed;inset:0;background:var(--bg);overflow-y:auto;display:none}
+.sheet.open{display:block}
+#viewSheet{z-index:20}
+#formSheet{z-index:22}
+#finSheet{z-index:24}
+.bar{background:var(--head);color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:2}
+.bar button{background:none;border:0;color:#fff;font:inherit;font-weight:600;cursor:pointer;padding:4px 8px}
+.wrap{max-width:560px;margin:0 auto;padding:16px}
+label.l{display:block;font-weight:700;margin:18px 0 6px}
+.photo{display:grid;width:100%;aspect-ratio:4/3;border-radius:14px;border:2px dashed var(--line);background:#fff center/cover no-repeat;place-items:center;color:var(--mute);cursor:pointer;text-align:center;overflow:hidden}
+.photo span{font-size:15px;font-weight:600}
+.vh{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none}
+.photoDel{margin-top:8px;background:none;border:0;color:var(--danger);font:inherit;font-weight:600;cursor:pointer;display:none}
+.jobs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.jobs button{padding:14px 8px;border-radius:12px;border:2px solid var(--line);background:#fff;font:inherit;font-weight:700;font-size:16px;cursor:pointer;color:var(--ink)}
+.jobs button.on{background:var(--head);border-color:var(--head);color:#fff}
+.jobs button:last-child:nth-child(odd){grid-column:1/-1}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg button{padding:16px 8px;border-radius:12px;border:2px solid var(--line);background:#fff;font:inherit;font-weight:800;font-size:17px;cursor:pointer;color:var(--ink)}
+.seg button small{display:block;font-weight:400;font-size:13px;color:var(--mute)}
+.seg button.on[data-v=single]{border-color:var(--single);background:#E6F0F8;color:var(--single)}
+.seg button.on[data-v=three]{border-color:var(--copper);background:#F8EEE3;color:var(--copper)}
+.seg button.on[data-v=yes]{border-color:var(--ok);background:#E5F3EA;color:var(--ok)}
+.seg button.on[data-v=no]{border-color:var(--danger);background:#FBE9E7;color:var(--danger)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wcount{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.wcount button{padding:14px 0;border-radius:12px;border:2px solid var(--line);background:#fff;font:inherit;font-weight:800;font-size:18px;cursor:pointer;color:var(--ink)}
+.wcount button.on{background:var(--copper);border-color:var(--copper);color:#fff}
+.sub{font-size:14px;color:var(--mute);margin:0 0 8px}
+.fld{display:flex;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;direction:ltr}
+.fld b{padding:0 12px;background:#F2F5F7;align-self:stretch;display:grid;place-items:center;min-width:64px;font-size:15px;border-right:1.5px solid var(--line)}
+.fld input{flex:1;border:0;padding:13px 10px;font:inherit;min-width:0;outline:none;background:transparent}
+.fld:focus-within{border-color:var(--head)}
+.in{width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;font:inherit;background:#fff}
+.who{display:flex;gap:10px}
+.who button{flex:1;padding:14px;border-radius:12px;border:2px solid var(--line);background:#fff;font:inherit;font-weight:800;font-size:17px;cursor:pointer;color:var(--ink)}
+.who button.on{background:var(--head);border-color:var(--head);color:#fff}
+.share{margin-top:10px;padding:12px 14px;border-radius:12px;background:#F8EEE3;color:#7A4A1C;font-weight:700;display:none}
+.save{width:100%;margin-top:26px;padding:16px;border:0;border-radius:14px;background:var(--ok);color:#fff;font:inherit;font-weight:800;font-size:18px;cursor:pointer}
+.save:disabled{opacity:.6}
+.stack{display:grid;gap:10px;margin-top:14px}
+.row2{display:flex;gap:10px;margin-top:10px}
+.btn{flex:1;padding:14px;border-radius:12px;border:2px solid var(--line);background:#fff;font:inherit;font-weight:700;cursor:pointer;color:var(--ink);text-align:center;text-decoration:none}
+.btn.del{border-color:var(--danger);color:var(--danger)}
+.btn.go{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:800}
+.btn.gold{background:#F2B84B;border-color:#F2B84B;color:#2b2100;font-weight:800}
+.big{width:100%;border-radius:14px;display:block;margin-bottom:12px}
+.kv{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.kv div{display:flex;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line);gap:12px}
+.kv div:last-child{border-bottom:0}
+.kv span{color:var(--mute);flex:none} .kv strong{direction:ltr;text-align:left}
+.kv strong.rt{direction:rtl;text-align:right}
+.sumbox{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-weight:700}
+.sumbox small{display:block;color:var(--mute);font-weight:400}
+.err{color:var(--danger);font-size:14px;margin-top:8px;min-height:20px}
+.toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;z-index:60;font-weight:600;display:none}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;display:none;align-items:center;justify-content:center;padding:20px}
+.mbox{background:#fff;border-radius:16px;padding:20px;max-width:360px;width:100%;font-weight:700}
+.foot{text-align:center;margin:28px 0}
+.foot button{background:none;border:0;color:var(--mute);font:inherit;text-decoration:underline;cursor:pointer}
+:focus-visible{outline:3px solid var(--copper);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="top"><h1>ئیشەکانمان</h1><button class="askbtn" id="askBtn">🤖 پرسیار</button><div class="count" id="count"></div></div>
+  <div class="mode" id="mode"></div>
+  <div class="bsum" id="bsum"></div>
+</header>
+
+<div class="tools">
+  <input class="search" id="q" type="search" placeholder="بگەڕێ بە ژمارە یان ناو..." inputmode="search">
+  <div class="chips" id="filters">
+    <button class="chip on" data-f="all">هەموو</button>
+    <button class="chip" data-f="open">لای ئێمەیە</button>
+    <button class="chip" data-f="unpaid">پارە نەدراوە</button>
+    <button class="chip" data-f="done">تەواوبوو</button>
+  </div>
+  <select class="search" id="jobFilter"></select>
+</div>
+
+<div class="list" id="list"></div>
+<div class="foot" style="margin-bottom:6px"><a href="./" style="color:var(--mute);font-weight:600">← مینۆی ئەپەکان</a></div>
+<div class="foot">
+  <button class="lnk" id="export">یەدەگ دابەزێنە (لەگەڵ وێنەکان)</button>
+  <label class="lnk" for="importIn">گەڕاندنەوەی یەدەگ</label>
+  <input type="file" id="importIn" accept=".json,application/json" class="vh">
+</div>
+
+<button class="fab" id="add">+ ئیشی نوێ</button>
+
+<!-- قۆناغی یەکەم: وەرگرتن -->
+
+<div class="sheet" id="formSheet">
+  <div class="bar"><button id="closeForm">داخستن</button><strong id="formTitle">ئیشی نوێ</strong><span style="width:60px"></span></div>
+  <div class="wrap">
+
+```
+<label class="l" style="margin-top:4px">١. جۆری کاڵاکە</label>
+<div class="jobs" id="jobs"></div>
+
+<label class="l">٢. وێنە</label>
+<label class="photo" id="photoBox" for="photoIn"><span>📷 کلیک بکە بۆ وێنە</span></label>
+<input type="file" id="photoIn" accept="image/*" class="vh">
+<button type="button" class="photoDel" id="photoDel">سڕینەوەی وێنە</button>
+
+<label class="l">٣. ژمارەی خاوەنی ئامێرەکە</label>
+<input class="in" id="owner" type="tel" dir="ltr" style="text-align:right" placeholder="07xx xxx xxxx">
+
+<label class="l">٤. بەرواری هێنان</label>
+<input class="in" id="dateIn" type="date" dir="ltr" style="text-align:right">
+
+<label class="l">ناوی خاوەن (ئیختیاری)</label>
+<input class="in" id="ownerName" placeholder="">
+
+<div class="later">
+  <div class="lh">وردەکاری ئامێرەکە</div>
+  <div class="lsub">ئیختیارییە. دواتر کە ئامێرەکەت کردەوە پڕی بکەرەوە. (پێش ئەوە جۆری کاڵاکە هەڵبژێرە)</div>
+
+  <div id="body" style="display:none">
+
+    <div id="dynBox" style="display:none">
+      <label class="l">جۆری دینەمۆ</label>
+      <div class="seg" id="typeSeg">
+        <button type="button" data-v="single">Single<small>یەک فەز</small></button>
+        <button type="button" data-v="three">Three phase<small>سێ فەز</small></button>
+      </div>
+    </div>
+
+    <div id="dynSpecs" style="display:none">
+      <label class="l">زانیارییەکان</label>
+      <div class="grid">
+        <div class="fld"><b>Hp</b><input id="hp" inputmode="decimal" placeholder="0"></div>
+        <div class="fld"><b>Kw</b><input id="kw" inputmode="decimal" placeholder="0"></div>
+        <div class="fld"><b>A</b><input id="a" inputmode="decimal" placeholder="0"></div>
+        <div class="fld"><b>Rpm</b><input id="rpm" inputmode="numeric" placeholder="0"></div>
+        <div class="fld" id="ufFld" style="display:none"><b>UF</b><input id="uf" inputmode="decimal" placeholder="0"></div>
+      </div>
+    </div>
+
+    <div id="genSpecs" style="display:none">
+      <label class="l">زانیارییەکانی تەولید</label>
+      <div class="grid">
+        <div class="fld"><b>Kv</b><input id="kv" inputmode="decimal" placeholder="0"></div>
+        <div class="fld"><b>Rpm</b><input id="rpm2" inputmode="numeric" placeholder="0"></div>
+      </div>
+      <label class="l">جۆری تەولید</label>
+      <input class="in" id="gtype" placeholder="">
+    </div>
+
+    <div id="windBox" style="display:none">
+      <div id="windsWrap"></div>
+      <label class="l">کیلۆی سیم</label>
+      <div class="sub">چەند کیلۆ سیمی خواردووە؟</div>
+      <div class="fld"><b>kg</b><input id="kg" inputmode="decimal" placeholder="0"></div>
+    </div>
+
+    <div id="descBox" style="display:none">
+      <label class="l">جۆری ئیشەکە</label>
+      <input class="in" id="desc" placeholder="چی چاک کراوەتەوە؟">
+    </div>
+  </div>
+
+  <label class="l">عەیب / کێشەی ئامێرەکە</label>
+  <input class="in" id="fault" placeholder="چی لێ هاتووە؟">
+
+  <label class="l">تێبینی (ئیختیاری)</label>
+  <input class="in" id="notes" placeholder="">
+</div>
+
+<div class="err" id="err"></div>
+<button class="save" id="save">پاشەکەوتکردن</button>
+```
+
+  </div>
+</div>
+
+<!-- قۆناغی دووەم: تەواوکردن و پارە -->
+
+<div class="sheet" id="finSheet">
+  <div class="bar"><button id="closeFin">داخستن</button><strong id="finTitle">تەواوکردنی ئیش</strong><span style="width:60px"></span></div>
+  <div class="wrap">
+    <div class="sumbox" id="finSum"></div>
+
+```
+<label class="l">نرخ (دینار)</label>
+<div class="fld"><b>IQD</b><input id="price" inputmode="numeric" placeholder="0"></div>
+
+<label class="l">کێ چاکی کردەوە؟</label>
+<div class="who" id="who">
+  <button type="button" data-v="بهجت">بهجت</button>
+  <button type="button" data-v="جلال">جلال</button>
+</div>
+<div class="share" id="share"></div>
+
+<label class="l">بەرواری چاککردن</label>
+<input class="in" id="dateDone" type="date" dir="ltr" style="text-align:right">
+
+<label class="l">پارەکە واسل کرا؟</label>
+<div class="seg" id="paidSeg">
+  <button type="button" data-v="yes">✔ بەڵێ، واسل بوو</button>
+  <button type="button" data-v="no">✖ نەخێر، هێشتا</button>
+</div>
+
+<div class="err" id="finErr"></div>
+<button class="save" id="finSave">پاشەکەوتکردن</button>
+```
+
+  </div>
+</div>
+
+<!-- وردەکاری -->
+
+<div class="sheet" id="viewSheet">
+  <div class="bar"><button id="closeView">گەڕانەوە</button><strong>زانیاری</strong><span style="width:60px"></span></div>
+  <div class="wrap" id="viewBody"></div>
+</div>
+
+<div class="modal" id="confirmBox">
+  <div class="mbox">
+    <p id="cText" style="margin-top:0"></p>
+    <div class="row2"><button class="btn" id="cNo">نەخێر</button><button class="btn del" id="cYes">بەڵێ</button></div>
+  </div>
+</div>
+
+<!-- یاریدەدەری زیرەک -->
+
+<div class="sheet" id="chatSheet">
+  <div class="bar"><button id="closeChat">داخستن</button><strong>یاریدەدەری دینەمۆ 🤖</strong><button id="chatMenu">⚙</button></div>
+  <div id="chatSetup" style="display:none;padding:16px;max-width:560px;margin:0 auto;width:100%;overflow-y:auto">
+    <div class="sumbox" style="line-height:2.1;font-weight:600">
+      بۆ ئەوەی یاریدەدەرەکە کار بکات، کلیلێکی API پێویستە (ئەمە جیایە لە ئەکاونتی Claude ی ئاسایی و بەپێی بەکارهێنان پارە دەدرێت):
+      <br>١. بڕۆ بۆ <b dir="ltr">console.anthropic.com</b> و ئەکاونتێک دروست بکە
+      <br>٢. لە Billing کەمێک بالانس زیاد بکە
+      <br>٣. لە API Keys ← Create Key، کلیلەکە کۆپی بکە
+      <br>٤. لێرە Paste بکە:
+    </div>
+    <input class="in" id="keyIn" type="password" dir="ltr" placeholder="sk-ant-..." style="margin-top:12px" autocomplete="off">
+    <div class="stack">
+      <button class="btn go" id="keySave">پاشەکەوتکردن</button>
+      <button class="btn" id="keyDel">سڕینەوەی کلیل</button>
+      <button class="btn" id="chatClear">پاککردنەوەی گفتوگۆ</button>
+      <button class="btn" id="setupBack">گەڕانەوە بۆ گفتوگۆ</button>
+    </div>
+    <div class="sub" style="margin-top:10px">کلیلەکە تەنها لەسەر ئەم مۆبایلەدا دەمێنێتەوە و لە هیچ کۆدێکدا نانووسرێت.</div>
+  </div>
+  <div id="chatMsgs"></div>
+  <div class="chatbar" id="chatBar">
+    <textarea id="chatIn" rows="1" placeholder="پرسیارەکەت بنووسە..."></textarea>
+    <button id="chatSend">ناردن</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+/* ============================================================
+   بۆ هاوبەشکردن لەگەڵ باوکت: ئەمە بگۆڕە بە firebaseConfig ی خۆت.
+   ئەگەر null بێت، زانیاری تەنها لەم مۆبایلەدا دەمێنێتەوە.
+   ============================================================ */
+const FIREBASE_CONFIG = null;
+/* مەسەلەن:
+const FIREBASE_CONFIG = {
+  apiKey: "...", authDomain: "...", projectId: "...",
+  storageBucket: "...", messagingSenderId: "...", appId: "..."
+};
+*/
+
+const JOBS = {
+  broom:   'گسکی کارەبایی',
+  mazakha: 'مزەخەی ماڵان',
+  cooler:  'موبەریدە',
+  soba:    'سۆبەی کارەبایی',
+  washer:  'غەسالە',
+  gen:     'تەولید',
+  dynamo:  'دینەمۆ'
+};
+const SIMPLE = ['broom','mazakha','cooler','soba','washer'];
+const BAHJAT_RATE = 0.25;
+
+const $ = s => document.querySelector(s);
+let motors = [];
+let statusF = 'all', jobF = 'all', query = '';
+let editing = null, draft = {};
+let viewId = null, finId = null, fin = {};
+
+/* ---------- هەڵگرتن ---------- */
+let store;
+if (FIREBASE_CONFIG && window.firebase) {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  const col = firebase.firestore().collection('motors');
+  store = {
+    shared: true,
+    listen(cb){ col.orderBy('createdAt','desc').onSnapshot(s => cb(s.docs.map(d => ({...d.data(), id:d.id}))), e => toast('هەڵە لە پەیوەندی: '+e.code)); },
+    save(m){ const {id, ...rest} = m; return id ? col.doc(id).set(rest) : col.add(rest); },
+    remove(id){ return col.doc(id).delete(); }
+  };
+} else {
+  const K = 'motors_v1';
+  const lsRead = () => { try { return JSON.parse(localStorage.getItem(K)) || []; } catch(e){ return []; } };
+  const sortD = a => a.slice().sort((x,y)=>(y.createdAt||0)-(x.createdAt||0));
+  /* ڕێگای کۆن (localStorage) — تەنها ئەگەر IndexedDB کار نەکرد */
+  const makeLocal = () => {
+    let cb = () => {};
+    return {
+      shared:false,
+      listen(f){ cb = f; cb(sortD(lsRead())); },
+      save(m){
+        const all = lsRead();
+        if (m.id){ const i = all.findIndex(x=>x.id===m.id); if(i>-1) all[i]=m; else all.push(m); }
+        else { m.id = 'm'+Date.now(); all.push(m); }
+        try { localStorage.setItem(K, JSON.stringify(all)); } catch(e){ toast('شوێن پڕبووە'); return Promise.reject(e); }
+        cb(sortD(all)); return Promise.resolve();
+      },
+      remove(id){
+        const all = lsRead().filter(x=>x.id!==id);
+        try { localStorage.setItem(K, JSON.stringify(all)); } catch(e){ return Promise.reject(e); }
+        cb(sortD(all)); return Promise.resolve();
+      }
+    };
+  };
+  /* ڕێگای نوێ: IndexedDB — شوێنی زۆر گەورە */
+  const makeIdb = () => {
+    let db = null, cache = [], cb = () => {}, fb = null;
+    const open = () => new Promise((res,rej)=>{
+      const r = indexedDB.open('ishekanman', 1);
+      r.onupgradeneeded = () => { r.result.createObjectStore('motors',{keyPath:'id'}); r.result.createObjectStore('meta'); };
+      r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error || new Error('idb')); r.onblocked = () => rej(new Error('blocked'));
+    });
+    const reqP = r => new Promise((res,rej)=>{ r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+    const txDone = t => new Promise((res,rej)=>{ t.oncomplete = () => res(); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error || new Error('abort')); });
+    const init = async () => {
+      db = await open();
+      const flag = await reqP(db.transaction('meta').objectStore('meta').get('migrated'));
+      if (!flag){
+        const old = lsRead();
+        if (old.length){
+          const t = db.transaction('motors','readwrite'), st = t.objectStore('motors');
+          old.forEach(m => { if (m && m.id) st.put(m); });
+          await txDone(t);
+          const back = await reqP(db.transaction('motors').objectStore('motors').getAll());
+          const ids = new Set(back.map(x=>x.id));
+          if (!old.every(m => !m || !m.id || ids.has(m.id))) throw new Error('migration check failed');
+        }
+        const t2 = db.transaction('meta','readwrite'); t2.objectStore('meta').put(true,'migrated'); await txDone(t2);
+        if (old.length){ try { localStorage.removeItem(K); } catch(e){} setTimeout(()=>toast('زانیارییەکان گواسترانەوە بۆ شوێنی گەورە ✔'),700); }
+      }
+      cache = await reqP(db.transaction('motors').objectStore('motors').getAll());
+    };
+    return {
+      shared:false,
+      listen(f){ cb = f; init().then(()=>cb(sortD(cache))).catch(e=>{ console.error(e); fb = makeLocal(); fb.listen(cb); }); },
+      async save(m){
+        if (fb) return fb.save(m);
+        if (!m.id) m.id = 'm'+Date.now();
+        const t = db.transaction('motors','readwrite'); t.objectStore('motors').put(m); await txDone(t);
+        const i = cache.findIndex(x=>x.id===m.id); if (i>-1) cache[i]=m; else cache.push(m);
+        cb(sortD(cache));
+      },
+      async remove(id){
+        if (fb) return fb.remove(id);
+        const t = db.transaction('motors','readwrite'); t.objectStore('motors').delete(id); await txDone(t);
+        cache = cache.filter(x=>x.id!==id); cb(sortD(cache));
+      }
+    };
+  };
+  store = window.indexedDB ? makeIdb() : makeLocal();
+}
+
+$('#mode').textContent = store.shared ? '✔ هاوبەشە — تۆ و باوکت هەردووکتان دەیبینن' : 'ئێستا تەنها لەم مۆبایلەدا پاشەکەوت دەکرێت';
+$('#mode').classList.toggle('shared', store.shared);
+
+/* ---------- یاریدەدەر ---------- */
+function toast(t){ const el=$('#toast'); el.textContent=t; el.style.display='block'; clearTimeout(toast.t); toast.t=setTimeout(()=>el.style.display='none',2600); }
+const esc = s => String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtD = d => d ? d.split('-').reverse().join('/') : '';
+const todayStr = () => new Date(Date.now() - new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
+const dateInOf = m => m.dateIn || (m.createdAt ? new Date(m.createdAt - new Date().getTimezoneOffset()*60000).toISOString().slice(0,10) : '');
+const money = n => Number(n||0).toLocaleString('en-US') + ' دینار';
+const jobOf = m => m.job || 'dynamo';
+const jn = j => JOBS[j] || 'دیاری نەکراوە';
+const statusOf = m => m.status || 'done';            // تۆمارە کۆنەکان وەک تەواوبوو دادەنرێن
+const isUnpaid = m => statusOf(m)==='done' && m.paid===false;
+const shareOf = m => (statusOf(m)==='done' && m.by==='بهجت' && m.price) ? Math.round(Number(m.price)*BAHJAT_RATE) : 0;
+const shareJ = m => (statusOf(m)==='done' && m.price) ? (m.by==='بهجت' ? Number(m.price)-shareOf(m) : (m.by==='جلال' ? Number(m.price) : 0)) : 0;
+const ufOf = m => (m.type==='single' && m.uf && m.uf!==true) ? m.uf : '';
+const typeName = t => t==='single' ? 'Single' : 'Three phase';
+
+function compress(file){
+  return new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onerror = () => rej(new Error('read'));
+    fr.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const max = 720, r = Math.min(1, max/Math.max(img.width, img.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(img.width*r); c.height = Math.round(img.height*r);
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        res(c.toDataURL('image/jpeg', .62));
+      };
+      img.onerror = () => rej(new Error('decode'));
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+function ask(text){
+  return new Promise(res => {
+    $('#cText').textContent = text; $('#confirmBox').style.display = 'flex';
+    const done = v => { $('#confirmBox').style.display = 'none'; res(v); };
+    $('#cYes').onclick = () => done(true); $('#cNo').onclick = () => done(false);
+  });
+}
+function pick(groupSel, val){
+  document.querySelectorAll(groupSel+' button').forEach(b => b.classList.toggle('on', b.dataset.v===val));
+}
+
+/* ---------- فلتەر ---------- */
+$('#jobFilter').innerHTML = `<option value="all">هەموو جۆرەکان</option><option value="none">وردەکاریان نەنووسراوە</option>` +
+  Object.entries(JOBS).map(([k,v]) => `<option value="${k}">${v}</option>`).join('');
+$('#jobFilter').onchange = e => { jobF = e.target.value; render(); };
+$('#jobs').innerHTML = Object.entries(JOBS).map(([k,v]) => `<button type="button" data-v="${k}">${v}</button>`).join('');
+
+/* ---------- لیست ---------- */
+function statusBadge(m){
+  if (statusOf(m)==='open') return '<span class="badge st-open">لای ئێمەیە</span>';
+  return isUnpaid(m) ? '<span class="badge st-unpaid">پارە نەدراوە</span>' : '<span class="badge st-paid">تەواو</span>';
+}
+const windsOf = m => Array.isArray(m.winds) ? m.winds : (m.wireCount ? [{count:m.wireCount, wires:m.wires||[], turns:m.turns||''}] : []);
+const windHas = W => !!(W && (W.count || (W.turns||'').toString().trim() || (W.wires||[]).some(x=>x)));
+const isSingleDyn = m => jobOf(m)==='dynamo' && m.type==='single';
+function windLine(m){
+  const single = isSingleDyn(m);
+  return windsOf(m).map((W,i) => {
+    if (!windHas(W)) return '';
+    const ws = (W.wires||[]).filter(Boolean);
+    const txt = [W.count ? W.count+' سیم' : '', ws.length ? '('+ws.join(' + ')+')' : '', W.turns ? W.turns+' فڕە' : ''].filter(Boolean).join(' · ');
+    return `<div class="meta">${single ? 'لەف '+(i+1)+': ' : ''}${esc(txt)}</div>`;
+  }).join('');
+}
+const kgLine = m => (m.kg ? `<div class="meta">سیم: ${esc(m.kg)} کیلۆ</div>` : '');
+function itemSummary(m){
+  const j = jobOf(m);
+  if (j==='none') return `<div class="meta">وردەکاری ئامێرەکە هێشتا نەنووسراوە</div>`;
+  if (j==='dynamo'){
+    const parts = [m.hp?m.hp+' Hp':'', m.kw?m.kw+' Kw':'', m.a?m.a+' A':'', m.rpm?m.rpm+' Rpm':'', ufOf(m)?ufOf(m)+' UF':''].filter(Boolean);
+    return `${m.type?`<span class="badge ${m.type}">${typeName(m.type)}</span>`:''}
+      ${parts.length?`<div class="specs ltr">${esc(parts.join(' · '))}</div>`:'<div class="meta">وردەکاری دینەمۆ هێشتا نەنووسراوە</div>'}${windLine(m)}${kgLine(m)}`;
+  }
+  if (j==='gen'){
+    const parts = [m.kv?m.kv+' Kv':'', m.rpm?m.rpm+' Rpm':''].filter(Boolean);
+    return `${parts.length?`<div class="specs ltr">${esc(parts.join(' · '))}</div>`:'<div class="meta">وردەکاری تەولید هێشتا نەنووسراوە</div>'}${m.gtype?`<div class="meta">${esc(m.gtype)}</div>`:''}${windLine(m)}${kgLine(m)}`;
+  }
+  return m.desc ? `<div class="specs">${esc(m.desc)}</div>` : '';
+}
+function render(){
+  $('#count').textContent = motors.length + ' ئیش';
+  const gotShare = motors.filter(m=>m.paid!==false).reduce((s,m)=>s+shareOf(m),0);
+  const owedShare = motors.filter(isUnpaid).reduce((s,m)=>s+shareOf(m),0);
+  const gotJ = motors.filter(m=>m.paid!==false).reduce((s,m)=>s+shareJ(m),0);
+  const owedJ = motors.filter(isUnpaid).reduce((s,m)=>s+shareJ(m),0);
+  const owed = motors.filter(isUnpaid).reduce((s,m)=>s+Number(m.price||0),0);
+  $('#bsum').innerHTML = [
+    gotShare ? '<div class="got">بەشی بهجت (وەرگیراو): ' + money(gotShare) + '</div>' : '',
+    owedShare ? '<div class="owe">بەشی بهجت (هێشتا وەرنەگیراوە): ' + money(owedShare) + '</div>' : '',
+    gotJ ? '<div class="gotj">بەشی جلال (وەرگیراو): ' + money(gotJ) + '</div>' : '',
+    owedJ ? '<div class="owe">بەشی جلال (هێشتا وەرنەگیراوە): ' + money(owedJ) + '</div>' : '',
+    owed ? '<div>پارەی وەرنەگیراوی گشتی: ' + money(owed) + '</div>' : ''
+  ].join('');
+  const q = query.trim().toLowerCase();
+  const rows = motors.filter(m =>
+    (statusF==='all' || (statusF==='open' && statusOf(m)==='open') || (statusF==='done' && statusOf(m)==='done') || (statusF==='unpaid' && isUnpaid(m))) &&
+    (jobF==='all' || jobOf(m)===jobF) &&
+    (!q || (m.owner||'').toLowerCase().includes(q) || (m.ownerName||'').toLowerCase().includes(q) || (m.by||'').includes(q) || (m.desc||'').toLowerCase().includes(q) || (m.fault||'').toLowerCase().includes(q) || (m.notes||'').toLowerCase().includes(q))
+  );
+  $('#list').innerHTML = rows.length ? rows.map(m => `
+    <div class="item" data-id="${esc(m.id)}">
+      <div class="thumb" style="${m.photo?`background-image:url('${m.photo}')`:''}">${m.photo?'':'⚙'}</div>
+      <div class="info">
+        <span class="badge">${jn(jobOf(m))}</span>${statusBadge(m)}
+        ${itemSummary(m)}
+        ${m.fault?`<div class="meta">عەیب: ${esc(m.fault)}</div>`:''}
+        <div class="meta">${m.ownerName?'<b>'+esc(m.ownerName)+'</b> · ':''}${esc(m.owner)}${m.by?' · '+esc(m.by):''}</div>
+        <div class="meta">هێنان: ${fmtD(dateInOf(m))}${m.dateDone?' · چاککردن: '+fmtD(m.dateDone):''}</div>
+        ${statusOf(m)==='done' && m.price?`<div class="price ${isUnpaid(m)?'no':''}">${money(m.price)}</div>`:''}
+      </div>
+    </div>`).join('') : `<div class="empty">${motors.length ? 'هیچ شتێک نەدۆزرایەوە' : 'هێشتا هیچ ئیشێک تۆمار نەکراوە.<br>دوگمەی «ئیشی نوێ» دابگرە.'}</div>`;
+}
+store.listen(list => { motors = list; render(); if (viewId && $('#viewSheet').classList.contains('open')) showView(viewId); });
+
+$('#q').addEventListener('input', e => { query = e.target.value; render(); });
+$('#filters').addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if(!b) return;
+  statusF = b.dataset.f;
+  document.querySelectorAll('#filters .chip').forEach(x=>x.classList.toggle('on', x===b));
+  render();
+});
+$('#list').addEventListener('click', e => { const it = e.target.closest('.item'); if(it) showView(it.dataset.id); });
+
+/* ============================================================
+   قۆناغی یەکەم: وەرگرتنی ئامێر
+   ============================================================ */
+function setPhoto(src){
+  const box = $('#photoBox');
+  box.style.backgroundImage = src ? `url('${src}')` : '';
+  box.innerHTML = src ? '' : '<span>📷 کلیک بکە بۆ وێنە</span>';
+  $('#photoDel').style.display = src ? 'inline-block' : 'none';
+}
+function renderWinds(){
+  const n = isSingleDyn(draft) ? 2 : 1;
+  draft.winds = Array.isArray(draft.winds) ? draft.winds : [];
+  while (draft.winds.length < n) draft.winds.push({count:0, wires:[], turns:''});
+  $('#windsWrap').innerHTML = Array.from({length:n}, (_,w) => {
+    const W = draft.winds[w];
+    const title = n===2 ? (w===0 ? 'لەفی یەکەم' : 'لەفی دووەم') : 'شێوازی لەفکردن';
+    const btns = [1,2,3,4,5].map(k => `<button type="button" data-w="${w}" data-v="${k}" class="${W.count===k?'on':''}">${k}</button>`).join('');
+    const flds = Array.from({length:W.count||0}, (_,i) =>
+      `<div class="fld"><b>سیم ${i+1}</b><input data-w="${w}" data-i="${i}" inputmode="decimal" placeholder="mm" value="${esc((W.wires||[])[i]||'')}"></div>`).join('');
+    return `<div class="windblk">
+      <label class="l">${title} (ئیختیاری)</label>
+      <div class="sub">بە چەند سیم کرایە؟</div>
+      <div class="wcount">${btns}</div>
+      ${W.count ? '<div class="sub" style="margin-top:12px">سایزی سیمەکان</div>' : ''}
+      <div class="grid">${flds}</div>
+      <div class="fld" style="margin-top:10px"><b>فڕە</b><input data-w="${w}" data-turns="1" inputmode="numeric" placeholder="چەند فڕەیە؟" value="${esc(W.turns||'')}"></div>
+    </div>`;
+  }).join('');
+}
+$('#windsWrap').addEventListener('click', e => {
+  const b = e.target.closest('button'); if(!b || b.dataset.w===undefined) return;
+  const W = draft.winds[Number(b.dataset.w)], k = Number(b.dataset.v);
+  W.count = (W.count===k) ? 0 : k;
+  renderWinds();
+});
+$('#windsWrap').addEventListener('input', e => {
+  const d = e.target.dataset; if (d.w===undefined) return;
+  const W = draft.winds[Number(d.w)];
+  if (d.turns) W.turns = e.target.value;
+  else if (d.i!==undefined){ W.wires = W.wires||[]; W.wires[Number(d.i)] = e.target.value; }
+});
+function refreshForm(){
+  const j = draft.job, dyn = j==='dynamo';
+  $('#body').style.display = (j && j!=='none') ? 'block' : 'none';
+  $('#dynBox').style.display = dyn ? 'block' : 'none';
+  $('#ufFld').style.display = (dyn && draft.type==='single') ? 'flex' : 'none';
+  $('#dynSpecs').style.display = (dyn && draft.type) ? 'block' : 'none';
+  $('#genSpecs').style.display = j==='gen' ? 'block' : 'none';
+  const windShown = (dyn && draft.type) || j==='gen';
+  $('#windBox').style.display = windShown ? 'block' : 'none';
+  if (windShown) renderWinds();
+  $('#descBox').style.display = SIMPLE.includes(j) ? 'block' : 'none';
+}
+function openForm(id, scrollToDetails){
+  editing = id || null;
+  const m = id ? motors.find(x=>x.id===id) : null;
+  draft = m ? {...m, job: (jobOf(m)==='none'?'':jobOf(m))} : {job:'', type:'', status:'open', photo:''};
+  $('#formTitle').textContent = m ? 'دەستکاریکردن' : 'ئیشی نوێ';
+  const set = (sel, v) => $(sel).value = v ?? '';
+  set('#hp',draft.hp); set('#kw',draft.kw); set('#a',draft.a);
+  set('#rpm', draft.job==='dynamo' ? draft.rpm : ''); set('#rpm2', draft.job==='gen' ? draft.rpm : '');
+  set('#uf', typeof draft.uf==='boolean' ? '' : draft.uf);
+  set('#kv',draft.kv); set('#gtype',draft.gtype); set('#desc',draft.desc); set('#kg',draft.kg);
+  draft.winds = JSON.parse(JSON.stringify(windsOf(draft)));
+  set('#fault',draft.fault); set('#ownerName',draft.ownerName); set('#owner',draft.owner);
+  set('#dateIn', m ? dateInOf(m) : todayStr());
+  set('#notes',draft.notes);
+  setPhoto(draft.photo); pick('#jobs', draft.job); pick('#typeSeg', draft.type);
+  $('#err').textContent=''; refreshForm();
+  $('#formSheet').classList.add('open');
+  $('#formSheet').scrollTop = scrollToDetails ? $('.later').offsetTop - 70 : 0;
+}
+$('#add').onclick = () => openForm();
+$('#closeForm').onclick = () => $('#formSheet').classList.remove('open');
+$('#photoIn').onchange = async e => {
+  const f = e.target.files[0]; if(!f) return;
+  try { draft.photo = await compress(f); setPhoto(draft.photo); }
+  catch(_) { toast('وێنەکە نەکرایەوە، وێنەیەکی تر هەڵبژێرە'); }
+  e.target.value = '';
+};
+$('#photoDel').onclick = () => { draft.photo = ''; setPhoto(''); };
+$('#jobs').onclick = e => { const b=e.target.closest('button'); if(!b) return; draft.job=b.dataset.v; pick('#jobs', draft.job); refreshForm(); };
+$('#typeSeg').onclick = e => { const b=e.target.closest('button'); if(!b) return; draft.type=b.dataset.v; pick('#typeSeg', draft.type); refreshForm(); };
+
+$('#save').onclick = async () => {
+  const get = s => $(s).value.trim();
+  const j = draft.job || 'none';
+  const m = {
+    ...draft, job:j, photo:draft.photo||'',
+    fault:get('#fault'), ownerName:get('#ownerName'), owner:get('#owner'), dateIn:get('#dateIn'), notes:get('#notes'),
+    status: draft.status || 'open',
+    createdAt: draft.createdAt || Date.now(), updatedAt: Date.now()
+  };
+  if (!m.id) delete m.id;
+  if (j==='dynamo') Object.assign(m, {type:draft.type||'', uf: draft.type==='single' ? get('#uf') : '', hp:get('#hp'), kw:get('#kw'), a:get('#a'), rpm:get('#rpm'), kg:get('#kg')});
+  else if (j==='gen') Object.assign(m, {kv:get('#kv'), rpm:get('#rpm2'), gtype:get('#gtype'), kg:get('#kg')});
+  else if (SIMPLE.includes(j)) m.desc = get('#desc');
+  if (j==='dynamo' || j==='gen'){
+    const n = isSingleDyn(m) ? 2 : 1;
+    m.winds = Array.from({length:n}, (_,w) => {
+      const W = (draft.winds||[])[w] || {};
+      const count = W.count || 0;
+      return {count, wires: Array.from({length:count}, (_,i) => ((W.wires||[])[i]||'').trim()), turns: (W.turns||'').toString().trim()};
+    });
+    delete m.wireCount; delete m.wires; delete m.turns;
+  }
+  if (!editing && !draft.job){ $('#err').textContent='جۆری کاڵاکە هەڵبژێرە'; $('#formSheet').scrollTop=0; return; }
+  if (!m.owner){ $('#err').textContent='ژمارەی خاوەن بنووسە'; $('#owner').focus(); return; }
+  if (!m.dateIn){ $('#err').textContent='بەرواری هێنان بنووسە'; return; }
+  $('#save').disabled = true;
+  try {
+    await store.save(m);
+    $('#formSheet').classList.remove('open');
+    toast('پاشەکەوت کرا ✔');
+  } catch(e){ $('#err').textContent='پاشەکەوت نەکرا، دووبارە هەوڵبدەوە'; }
+  $('#save').disabled = false;
+};
+
+/* ============================================================
+   قۆناغی دووەم: تەواوکردن، نرخ و پارە
+   ============================================================ */
+function refreshShare(){
+  const el = $('#share');
+  const price = Number($('#price').value.replace(/[^\d.]/g,''));
+  if (fin.by==='بهجت' && price){
+    const s = Math.round(price*BAHJAT_RATE);
+    el.style.display = 'block';
+    el.textContent = `بەشی بهجت (٢٥٪): ${money(s)} — ماوە: ${money(price-s)}`;
+  } else el.style.display = 'none';
+}
+function openFin(id){
+  const m = motors.find(x=>x.id===id); if(!m) return;
+  finId = id;
+  fin = { by: m.by||'', paid: statusOf(m)==='done' && m.paid!==undefined ? m.paid : null };
+  $('#finTitle').textContent = statusOf(m)==='open' ? 'تەواوکردنی ئیش' : 'دەستکاری نرخ و پارە';
+  $('#finSum').innerHTML = `${jn(jobOf(m))}<small>${esc(m.owner)} · هێنان: ${fmtD(dateInOf(m))}</small>`;
+  $('#price').value = m.price || '';
+  $('#dateDone').value = m.dateDone || todayStr();
+  pick('#who', fin.by);
+  pick('#paidSeg', fin.paid===true ? 'yes' : fin.paid===false ? 'no' : '');
+  $('#finErr').textContent = ''; refreshShare();
+  $('#finSheet').classList.add('open'); $('#finSheet').scrollTop = 0;
+}
+$('#closeFin').onclick = () => $('#finSheet').classList.remove('open');
+$('#who').onclick = e => { const b=e.target.closest('button'); if(!b) return; fin.by=b.dataset.v; pick('#who', fin.by); refreshShare(); };
+$('#paidSeg').onclick = e => { const b=e.target.closest('button'); if(!b) return; fin.paid = b.dataset.v==='yes'; pick('#paidSeg', b.dataset.v); };
+$('#price').addEventListener('input', refreshShare);
+
+$('#finSave').onclick = async () => {
+  const m = motors.find(x=>x.id===finId); if(!m) return;
+  const price = Number($('#price').value.replace(/[^\d.]/g,''))||0;
+  const dateDone = $('#dateDone').value;
+  const err = t => { $('#finErr').textContent = t; };
+  if (!price) return err('نرخ بنووسە');
+  if (!fin.by) return err('هەڵبژێرە کێ چاکی کردەوە (بهجت یان جلال)');
+  if (!dateDone) return err('بەرواری چاککردن بنووسە');
+  if (dateDone < dateInOf(m)) return err('بەرواری چاککردن نابێت پێش بەرواری هێنان بێت');
+  if (fin.paid===null) return err('هەڵبژێرە پارەکە واسل کرا یان نا');
+  const upd = {...m, status:'done', price, by:fin.by, dateDone, paid:fin.paid, paidDate: fin.paid ? (m.paidDate || todayStr()) : '', updatedAt:Date.now()};
+  $('#finSave').disabled = true;
+  try { await store.save(upd); $('#finSheet').classList.remove('open'); toast('پاشەکەوت کرا ✔'); }
+  catch(e){ err('پاشەکەوت نەکرا، دووبارە هەوڵبدەوە'); }
+  $('#finSave').disabled = false;
+};
+
+/* ---------- وردەکاری ---------- */
+function showView(id){
+  const m = motors.find(x=>x.id===id);
+  if (!m){ $('#viewSheet').classList.remove('open'); return; }
+  viewId = id;
+  const j = jobOf(m), st = statusOf(m);
+  let rows = `<div><span>دۆخ</span><strong class="rt">${st==='open' ? 'لای ئێمەیە' : (isUnpaid(m) ? 'تەواو بوو — پارە نەدراوە' : 'تەواو بوو — پارە دراوە')}</strong></div>
+    <div><span>جۆری ئیش</span><strong class="rt">${jn(j)}</strong></div>`;
+  const R = (l,v,cls) => (v!==undefined && v!==null && String(v).trim()!=='') ? `<div><span>${l}</span><strong${cls?` class="${cls}"`:''}>${esc(v)}</strong></div>` : '';
+  if (j==='none') rows += `<div><span>وردەکاری</span><strong class="rt bad">هێشتا نەنووسراوە</strong></div>`;
+  else if (j==='dynamo'){
+    rows += (m.type?R('جۆر',typeName(m.type)):'')+R('Hp',m.hp)+R('Kw',m.kw)+R('A',m.a)+R('Rpm',m.rpm)+R('UF',ufOf(m));
+  } else if (j==='gen'){
+    rows += R('Kv',m.kv)+R('Rpm',m.rpm)+R('جۆری تەولید',m.gtype,'rt');
+  } else {
+    rows += R('وەسف',m.desc,'rt');
+  }
+  {
+    const single = isSingleDyn(m);
+    windsOf(m).forEach((W,i) => {
+      if (!windHas(W)) return;
+      const pre = single ? (i===0 ? 'لەفی یەکەم · ' : 'لەفی دووەم · ') : '';
+      if (W.count) rows += `<div><span>${pre}سیم</span><strong class="rt">${W.count} سیم</strong></div>`;
+      (W.wires||[]).forEach((w,k) => { if (w) rows += `<div><span>${pre}سایزی سیم ${k+1}</span><strong>${esc(w)}</strong></div>`; });
+      if ((W.turns||'').toString().trim()) rows += `<div><span>${pre}فڕە</span><strong>${esc(W.turns)}</strong></div>`;
+    });
+  }
+  if (m.kg) rows += `<div><span>کیلۆی سیم</span><strong>${esc(m.kg)} kg</strong></div>`;
+  if (m.fault) rows += `<div><span>عەیب</span><strong class="rt">${esc(m.fault)}</strong></div>`;
+  if (m.ownerName) rows += `<div><span>ناوی خاوەن</span><strong class="rt">${esc(m.ownerName)}</strong></div>`;
+  rows += `<div><span>ژمارەی خاوەن</span><strong>${esc(m.owner)}</strong></div>
+    <div><span>بەرواری هێنان</span><strong>${fmtD(dateInOf(m))}</strong></div>`;
+  if (st==='done'){
+    rows += `<div><span>نرخ</span><strong class="rt">${money(m.price)}</strong></div>
+      <div><span>چاککەرەوە</span><strong class="rt">${esc(m.by)}</strong></div>`;
+    if (m.by==='بهجت') rows += `<div><span>بەشی بهجت (٢٥٪)${isUnpaid(m)?' — وەرنەگیراوە':''}</span><strong class="rt ${isUnpaid(m)?'bad':''}">${money(shareOf(m))}</strong></div>
+      <div><span>بەشی جلال (٧٥٪)${isUnpaid(m)?' — وەرنەگیراوە':''}</span><strong class="rt ${isUnpaid(m)?'bad':''}">${money(shareJ(m))}</strong></div>`;
+    else if (m.by==='جلال') rows += `<div><span>بەشی جلال${isUnpaid(m)?' — وەرنەگیراوە':''}</span><strong class="rt ${isUnpaid(m)?'bad':''}">${money(shareJ(m))}</strong></div>`;
+    if (m.dateDone) rows += `<div><span>بەرواری چاککردن</span><strong>${fmtD(m.dateDone)}</strong></div>`;
+    if (m.paid===true && m.paidDate) rows += `<div><span>بەرواری واسلبوون</span><strong>${fmtD(m.paidDate)}</strong></div>`;
+  }
+  if (m.notes) rows += `<div><span>تێبینی</span><strong class="rt">${esc(m.notes)}</strong></div>`;
+
+  let main = '';
+  const needsDetails = j==='none' || (j==='dynamo' && !m.hp && !m.kw && !m.a && !m.rpm) || (j==='gen' && !m.kv && !m.rpm);
+  if (st==='open') main = (needsDetails?`<button class="btn gold" id="vFill">📝 وردەکارییەکان پڕ بکەوە</button>`:'')+`<button class="btn go" id="vFin">✔ تەواو بوو و بردرایەوە (نرخ و پارە)</button>`;
+  else {
+    if (m.paid===false) main += `<button class="btn go" id="vPaid">✔ پارەکە واسل بوو</button>`;
+    main += `<button class="btn" id="vFinEdit">دەستکاری نرخ و پارە</button>`;
+  }
+  $('#viewBody').innerHTML = `
+    ${m.photo?`<img class="big" src="${m.photo}" alt="">`:''}
+    <div class="kv">${rows}</div>
+    <div class="stack">${main}<button class="btn" id="vAsk">🤖 پرسیار دەربارەی ئەم ئامێرە</button></div>
+    <div class="row2">
+      ${m.owner?`<a class="btn" href="tel:${esc(m.owner)}">پەیوەندی</a>`:''}
+      <button class="btn" id="vEdit">دەستکاری</button>
+      <button class="btn del" id="vDel">سڕینەوە</button>
+    </div>`;
+  $('#viewSheet').classList.add('open');
+  $('#vEdit').onclick = () => openForm(id);
+  if ($('#vFill')) $('#vFill').onclick = () => openForm(id,true);
+  $('#vAsk').onclick = () => openChat('ئەم ئامێرەم هاتووە: ' + recText(m) + '.\n');
+  if ($('#vFin')) $('#vFin').onclick = () => openFin(id);
+  if ($('#vFinEdit')) $('#vFinEdit').onclick = () => openFin(id);
+  if ($('#vPaid')) $('#vPaid').onclick = async () => {
+    await store.save({...m, paid:true, paidDate:todayStr(), updatedAt:Date.now()}); toast('پارەکە واسل بوو ✔');
+  };
+  $('#vDel').onclick = async () => {
+    if (!(await ask('دڵنیایت لە سڕینەوەی ئەم تۆمارە؟'))) return;
+    try { await store.remove(id); $('#viewSheet').classList.remove('open'); viewId = null; toast('سڕایەوە'); }
+    catch(e){ toast('نەسڕایەوە، دووبارە هەوڵبدەوە'); }
+  };
+}
+$('#closeView').onclick = () => { $('#viewSheet').classList.remove('open'); viewId = null; };
+
+
+/* ============================================================
+   یاریدەدەری زیرەک (Claude)
+   ============================================================ */
+const AI_MODEL = 'claude-sonnet-5-5';
+const AI_SYSTEM = `You are an experienced assistant for a workshop in Kurdistan (Erbil) that rewinds electric motors and repairs dynamos, generators and household appliances (vacuum brooms, washing machines, coolers, electric heaters, water pumps and similar).
+The user is a practical craftsman, not an engineer. ALWAYS answer in Kurdish Sorani (Arabic script), in simple, short, practical sentences. Use Latin digits for numbers and keep technical terms (Hp, Kw, A, Rpm, UF, mm) as written.
+Plain text only: no markdown tables, no headings. You may use short lines starting with "-" and **bold** for key numbers.
+Topics you help with: single-phase and three-phase motor rewinding (turns, wire size, number of parallel wires, coil span, slots/poles, connection star/delta), capacitors (UF) and start/run windings, wire substitution, generator (تەولید) winding, fault finding (burnt winding, insulation, bearings), and safety.
+Wire size convention in this shop: a number like 80 means 0.80 mm (and 70 = 0.70 mm). Parallel wires wound together: total copper area is proportional to the SUM of the squares of the diameters. To substitute a missing size, keep the sum of squares about equal (within about -2% to +4%) and tell the percentage difference. Example: two wires of 80 (0.64+0.64=1.28) can be replaced by 70 + 90 (0.49+0.81=1.30, +1.6%), or 75 + 85. Also remind them to check that the new wires still fit in the slot.
+Be honest: if exact factory data is needed and you are not sure, say so, give a safe estimate and tell them to check the original winding data (turns count, wire size, pitch) when stripping the old coil. Never invent precise figures. Ask ONE short follow-up question if an important measurement is missing (poles/rpm, slot count, voltage). Mention electrical safety briefly when relevant (discharge capacitors, unplug before work).`;
+
+let chat = [];
+try { chat = JSON.parse(localStorage.getItem('chat_v1')) || []; } catch(e){ chat = []; }
+let chatBusy = false;
+const getKey = () => { try { return localStorage.getItem('ai_key') || ''; } catch(e){ return ''; } };
+const saveChat = () => { try { localStorage.setItem('chat_v1', JSON.stringify(chat.slice(-40))); } catch(e){} };
+
+function recText(m){
+  const j = jobOf(m), parts = [jn(j)];
+  if (j==='dynamo') parts.push(m.type?typeName(m.type):'', m.hp?m.hp+' Hp':'', m.kw?m.kw+' Kw':'', m.a?m.a+' A':'', m.rpm?m.rpm+' Rpm':'', ufOf(m) ? ufOf(m)+' UF' : '', m.kg?m.kg+' کیلۆ سیم':'');
+  if (j==='gen') parts.push(m.kv?m.kv+' Kv':'', m.rpm?m.rpm+' Rpm':'', m.gtype, m.kg?m.kg+' کیلۆ سیم':'');
+  if (SIMPLE.includes(j)) parts.push(m.desc);
+  windsOf(m).forEach((W,i) => {
+    if (!windHas(W)) return;
+    const ws = (W.wires||[]).filter(Boolean).join('+');
+    parts.push((windsOf(m).length>1 ? 'لەفی '+(i+1)+': ' : 'لەف: ') + [W.count ? W.count+' سیم' : '', ws, W.turns ? W.turns+' فڕە' : ''].filter(Boolean).join(' '));
+  });
+  if (m.fault) parts.push('عەیب: '+m.fault);
+  return parts.filter(Boolean).join('، ');
+}
+const fmtMsg = t => esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
+const QUICK = ['سیمی 80 نەبوو، بە چی بیگۆڕم؟', 'دینەمۆی سێ فەز 3 Hp و 1430 Rpm، بە چ شێوەیەک لەف دەکرێت؟', 'دینەمۆی Single سووتاوە، چۆن بزانم کام لەفە سووتاوە؟'];
+
+function renderChat(extra){
+  let h = '';
+  if (!chat.length){
+    h += `<div class="msg a">سڵاو! هەرچی دەربارەی دینەمۆ و لەفکردن و چاککردنی ئامێرە کارەبایی هەیە بپرسە.
+      <div class="qchips">${QUICK.map(q=>`<button type="button" data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div></div>`;
+  }
+  h += chat.map(c => `<div class="msg ${c.role==='user'?'u':'a'}">${fmtMsg(c.content)}</div>`).join('');
+  if (extra==='typing') h += '<div class="msg t">...</div>';
+  if (extra && extra!=='typing') h += `<div class="msg e">${esc(extra)}</div>`;
+  const box = $('#chatMsgs'); box.innerHTML = h; box.scrollTop = box.scrollHeight;
+}
+function showSetup(on){
+  $('#chatSetup').style.display = on ? 'block' : 'none';
+  $('#chatMsgs').style.display = on ? 'none' : 'flex';
+  $('#chatBar').style.display = on ? 'none' : 'flex';
+  if (on) $('#keyIn').value = '';
+}
+function openChat(prefill){
+  $('#chatSheet').classList.add('open');
+  showSetup(!getKey());
+  renderChat();
+  if (prefill && getKey()){ $('#chatIn').value = prefill; setTimeout(()=>{ const t=$('#chatIn'); t.focus(); t.setSelectionRange(t.value.length,t.value.length); },50); }
+}
+async function sendChat(text){
+  text = (text||'').trim();
+  if (!text || chatBusy) return;
+  const key = getKey(); if (!key){ showSetup(true); return; }
+  chatBusy = true; $('#chatSend').disabled = true;
+  chat.push({role:'user', content:text}); $('#chatIn').value = '';
+  renderChat('typing');
+  let hist = chat.slice(-12); while (hist.length && hist[0].role!=='user') hist.shift();
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({model:AI_MODEL, max_tokens:1000, system:AI_SYSTEM, messages:hist.map(({role,content})=>({role,content}))})
+    });
+    const data = await r.json().catch(()=>({}));
+    if (!r.ok) { const err = new Error((data.error && data.error.message) || ('HTTP '+r.status)); err.status = r.status; throw err; }
+    const out = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
+    chat.push({role:'assistant', content: out || '...'});
+    saveChat(); renderChat();
+  } catch(e){
+    chat.pop(); $('#chatIn').value = text;
+    let msg = 'هەڵەیەک ڕوویدا: ' + e.message;
+    if (e.status===401) msg = 'کلیلەکە هەڵەیە. لە ⚙ دووبارە بینووسەرەوە.';
+    else if (/credit|balance/i.test(e.message||'')) msg = 'بالانسی API تەواو بووە. لە console.anthropic.com بالانس زیاد بکە.';
+    else if (e.status===429) msg = 'زۆر داواکاری نێردرا، کەمێک چاوەڕێ بکە و دووبارە هەوڵ بدەرەوە.';
+    else if (e instanceof TypeError) msg = 'پەیوەندی بە ئینتەرنێتەوە نییە.';
+    renderChat(msg);
+  }
+  chatBusy = false; $('#chatSend').disabled = false;
+}
+$('#askBtn').onclick = () => openChat();
+$('#closeChat').onclick = () => $('#chatSheet').classList.remove('open');
+$('#chatMenu').onclick = () => showSetup($('#chatSetup').style.display==='none');
+$('#setupBack').onclick = () => { if (getKey()) { showSetup(false); renderChat(); } else toast('یەکەم کلیل بنووسە'); };
+$('#keySave').onclick = () => {
+  const k = $('#keyIn').value.trim();
+  if (!k) return toast('کلیلەکە بنووسە');
+  try { localStorage.setItem('ai_key', k); } catch(e){ return toast('پاشەکەوت نەکرا'); }
+  toast('پاشەکەوت کرا ✔'); showSetup(false); renderChat();
+};
+$('#keyDel').onclick = () => { try { localStorage.removeItem('ai_key'); } catch(e){} toast('کلیل سڕایەوە'); showSetup(true); };
+$('#chatClear').onclick = async () => {
+  if (!(await ask('هەموو گفتوگۆکە دەسڕێتەوە؟'))) return;
+  chat = []; saveChat(); showSetup(false); renderChat();
+};
+$('#chatSend').onclick = () => sendChat($('#chatIn').value);
+$('#chatIn').addEventListener('keydown', e => { if (e.key==='Enter' && !e.shiftKey && e.ctrlKey) { e.preventDefault(); sendChat($('#chatIn').value); } });
+$('#chatMsgs').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (b) sendChat(b.dataset.q); });
+
+/* ---------- یەدەگ ---------- */
+$('#export').onclick = async () => {
+  const name = 'ishekanman-backup-' + todayStr() + '.json';
+  const file = new File([JSON.stringify(motors)], name, {type:'application/json'});
+  try {
+    if (navigator.canShare && navigator.canShare({files:[file]})) { await navigator.share({files:[file], title:name}); return; }
+  } catch(e){ if (e && e.name==='AbortError') return; }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(file); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+};
+$('#importIn').onchange = async e => {
+  const f = e.target.files[0]; if(!f) return;
+  try {
+    const data = JSON.parse(await f.text());
+    if (!Array.isArray(data)) throw new Error('bad');
+    if (!(await ask(data.length + ' تۆمار دەگەڕێنرێتەوە. بەردەوام بیت؟'))) { e.target.value=''; return; }
+    for (const m of data){
+      if (!m || !m.id) continue;
+      const ex = motors.find(x => x.id===m.id);
+      if (ex && !m.photo && ex.photo) m.photo = ex.photo;
+      await store.save(m);
+    }
+    toast('گەڕایەوە ✔');
+  } catch(_) { toast('ئەم فایلە دروست نییە'); }
+  e.target.value = '';
+};
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+</script>
+
+</body>
+</html>
